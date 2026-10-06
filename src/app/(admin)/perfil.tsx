@@ -6,7 +6,7 @@ import { Colors } from '../../constants/colors';
 export default function AdminPerfil() {
   const router = useRouter();
 
-  const handleCerrarSesion = () => {
+const handleCerrarSesion = () => {
     router.replace('/');
   };
 

@@ -24,7 +24,7 @@ export default function AdminTabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="ingreso"
         options={{
           title: 'Ingreso',
           tabBarIcon: ({ color, size }) => (
