@@ -1,45 +1,55 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
-  View
-} from 'react-native';
-import { Colors } from '../constants/colors';
+  View,
+} from "react-native";
+import { Colors } from "../constants/colors";
 
 export default function SplashLogin() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-const handleIngresar = () => {
+  const handleIngresar = () => {
     // Si es el mail del admin, lo mandamos al grupo (admin)
-    if (email.toLowerCase() === 'admin@hospital.com' && password === 'admin123') {
-      router.replace('/(admin)'); 
+    if (
+      email.toLowerCase() === "admin@hospital.com" &&
+      password === "admin123"
+    ) {
+      router.replace("/(admin)");
+    }
+    if (
+      email.toLowerCase() === "profesional@hospital.com" &&
+      password === "profesional123"
+    ) {
+      router.replace("/(ambulancia)");
     } else {
       // Si no, lo mandamos al grupo (tabs) que es el del paciente
-      router.replace('/(tabs)/home'); 
+      router.replace("/(tabs)/home");
     }
   };
 
   const handleCrearCuenta = () => {
-    router.push('/crearPerfil');
+    router.push("/crearPerfil");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        
         {/* Logo */}
         <View style={styles.logoContainer}>
           <View style={styles.logo}>
             <Text style={styles.logoIcon}>🏥</Text>
           </View>
           <Text style={styles.title}>PreGuardia</Text>
-          <Text style={styles.subtitle}>Tu guardia, sin esperas innecesarias</Text>
+          <Text style={styles.subtitle}>
+            Tu guardia, sin esperas innecesarias
+          </Text>
         </View>
 
         {/* Formulario */}
@@ -82,7 +92,6 @@ const handleIngresar = () => {
         <Text style={styles.legal}>
           Al continuar, aceptás nuestros términos y políticas de salud pública.
         </Text>
-        
       </View>
     </SafeAreaView>
   );
@@ -96,12 +105,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingTop: 60,
     paddingBottom: 20,
   },
   logoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
   },
   logo: {
@@ -109,34 +118,34 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 18,
     backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16,
   },
-  logoIcon: { 
+  logoIcon: {
     fontSize: 34,
-    color: '#FFF' 
+    color: "#FFF",
   },
-  title: { 
-    fontSize: 28, 
-    fontWeight: 'bold', 
-    color: Colors.primary 
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: Colors.primary,
   },
-  subtitle: { 
-    fontSize: 14, 
-    color: Colors.textLight, 
-    marginTop: 6 
+  subtitle: {
+    fontSize: 14,
+    color: Colors.textLight,
+    marginTop: 6,
   },
-  form: { 
-    width: '100%',
+  form: {
+    width: "100%",
     marginTop: 40,
   },
-  label: { 
-    fontSize: 13, 
-    fontWeight: '500',
-    color: Colors.text, 
-    marginBottom: 8, 
-    marginTop: 16 
+  label: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: Colors.text,
+    marginBottom: 8,
+    marginTop: 16,
   },
   input: {
     borderWidth: 1,
@@ -145,45 +154,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
   },
   forgot: {
     color: Colors.primary,
     fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'right',
+    fontWeight: "500",
+    textAlign: "right",
     marginTop: 12,
   },
   primaryButton: {
     backgroundColor: Colors.primary,
     borderRadius: 12,
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 32,
   },
-  primaryButtonText: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    fontSize: 16 
+  primaryButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   secondaryButton: {
     borderWidth: 1.5,
     borderColor: Colors.primary,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderRadius: 12,
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 16,
   },
-  secondaryButtonText: { 
-    color: Colors.primary, 
-    fontWeight: 'bold', 
-    fontSize: 16 
+  secondaryButtonText: {
+    color: Colors.primary,
+    fontWeight: "bold",
+    fontSize: 16,
   },
   legal: {
     fontSize: 12,
     color: Colors.textLight,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 40,
   },
 });
