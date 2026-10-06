@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
-  View,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
   Text,
   TextInput,
-  Pressable,
-  StyleSheet,
-  SafeAreaView
+  View
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Colors } from '../constants/colors';
 
 export default function SplashLogin() {
@@ -15,8 +15,14 @@ export default function SplashLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleIngresar = () => {
-    router.replace('/home'); 
+const handleIngresar = () => {
+    // Si es el mail del admin, lo mandamos al grupo (admin)
+    if (email.toLowerCase() === 'admin@hospital.com' && password === 'admin123') {
+      router.replace('/(admin)'); 
+    } else {
+      // Si no, lo mandamos al grupo (tabs) que es el del paciente
+      router.replace('/(tabs)/home'); 
+    }
   };
 
   const handleCrearCuenta = () => {
