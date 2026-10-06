@@ -16,7 +16,22 @@ export default function SplashLogin() {
   const [password, setPassword] = useState("");
 
   const handleIngresar = () => {
-    router.replace("/home");
+    // Si es el mail del admin, lo mandamos al grupo (admin)
+    if (
+      email.toLowerCase() === "admin@hospital.com" &&
+      password === "admin123"
+    ) {
+      router.replace("/(admin)");
+    }
+    if (
+      email.toLowerCase() === "profesional@hospital.com" &&
+      password === "profesional123"
+    ) {
+      router.replace("/(ambulancia)");
+    } else {
+      // Si no, lo mandamos al grupo (tabs) que es el del paciente
+      router.replace("/(tabs)/home");
+    }
   };
 
   const handleCrearCuenta = () => {
