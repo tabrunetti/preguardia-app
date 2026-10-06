@@ -15,22 +15,19 @@ export default function SplashLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleIngresar = () => {
-    // Si es el mail del admin, lo mandamos al grupo (admin)
-    if (
-      email.toLowerCase() === "admin@hospital.com" &&
-      password === "admin123"
-    ) {
-      router.replace("/(admin)");
-    }
-    if (
-      email.toLowerCase() === "profesional@hospital.com" &&
-      password === "profesional123"
-    ) {
-      router.replace("/(ambulancia)");
-    } else {
-      // Si no, lo mandamos al grupo (tabs) que es el del paciente
-      router.replace("/(tabs)/home");
+const handleIngresar = () => {
+    // 1. Verificamos si es admin
+    if (email.toLowerCase() === "admin@hospital.com" && password === "admin123") {
+      router.replace("/(admin)/ingreso");
+    } 
+    // 2. Usamos 'else if' para el profesional
+    else if (email.toLowerCase() === "profesional@hospital.com" && password === "profesional123") {
+      router.replace("/ambulancia/home"); 
+    } 
+    // 3. Si no es ninguno de los anteriores, es un paciente
+    else {
+      // Actualizado al nuevo nombre de tu carpeta: (paciente)
+      router.replace("/(paciente)/home");
     }
   };
 
