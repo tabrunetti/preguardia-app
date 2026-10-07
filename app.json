@@ -32,6 +32,12 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "PreGuardia usa la cámara para leer el código de tu DNI y completar tus datos automáticamente."
+        }
       ]
     ],
     "experiments": {

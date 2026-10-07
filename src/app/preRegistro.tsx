@@ -1,31 +1,41 @@
-import React, { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Colors } from '../constants/colors';
-import { HOSPITALES } from '../data/hospitals';
-import { Ionicons } from '@expo/vector-icons';
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import EscanerDni from "../components/escanerDni";
+import { Colors } from "../constants/colors";
+import { HOSPITALES } from "../data/hospitals";
+import { DatosDni, formatearDni } from "../utils/dni";
 
 export default function PreRegistro() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const hospital = HOSPITALES.find((h) => h.id === id) ?? HOSPITALES[0];
 
-  const [nombre, setNombre] = useState('');
-  const [dni, setDni] = useState('');
-  const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [obraSocial, setObraSocial] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [contactoEmergencia, setContactoEmergencia] = useState('');
+  const [nombre, setNombre] = useState("");
+  const [dni, setDni] = useState("");
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
+  const [obraSocial, setObraSocial] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [contactoEmergencia, setContactoEmergencia] = useState("");
+
+  const [escanerVisible, setEscanerVisible] = useState(false);
+
+  const handleDniEscaneado = (d: DatosDni) => {
+    setNombre(`${d.nombres} ${d.apellido}`);
+    setDni(formatearDni(d.dni));
+    setFechaNacimiento(d.fechaNacimiento);
+  };
 
   const handleSiguiente = () => {
     router.push(`/banderasRojas?id=${hospital.id}`);
@@ -33,12 +43,14 @@ export default function PreRegistro() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        style={{ flex: 1 }} 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header con botón atrás y contador de pasos */}
           <View style={styles.header}>
             <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -52,6 +64,25 @@ export default function PreRegistro() {
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
+
+          {/* Botón escanear DNI */}
+          <Pressable
+            style={styles.escanearBtn}
+            onPress={() => setEscanerVisible(true)}
+          >
+            <Ionicons name="scan-outline" size={22} color={Colors.primary} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.escanearTitulo}>Escanear DNI</Text>
+              <Text style={styles.escanearSub}>
+                Completá tus datos automáticamente
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={Colors.textLight}
+            />
+          </Pressable>
 
           {/* Formulario */}
           <View style={styles.form}>
@@ -77,7 +108,7 @@ export default function PreRegistro() {
             <Text style={styles.label}>Fecha de nacimiento *</Text>
             <TextInput
               style={styles.input}
-              placeholder="DD / MM / AAAA"
+              placeholder="DD/MM/AAAA"
               placeholderTextColor={Colors.textLight}
               value={fechaNacimiento}
               onChangeText={setFechaNacimiento}
@@ -115,17 +146,23 @@ export default function PreRegistro() {
           <Pressable style={styles.siguienteBtn} onPress={handleSiguiente}>
             <Text style={styles.siguienteTexto}>Siguiente paso →</Text>
           </Pressable>
-
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Modal del escáner */}
+      <EscanerDni
+        visible={escanerVisible}
+        onClose={() => setEscanerVisible(false)}
+        onEscaneado={handleDniEscaneado}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: Colors.background 
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -134,25 +171,25 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   backButton: {
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
-  paso: { 
-    fontSize: 14, 
-    fontWeight: '600',
-    color: Colors.primary 
+  paso: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.primary,
   },
-  titulo: { 
-    fontSize: 26, 
-    fontWeight: 'bold', 
+  titulo: {
+    fontSize: 26,
+    fontWeight: "bold",
     color: Colors.text,
   },
   progressBar: {
@@ -163,20 +200,41 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   progressFill: {
-    width: '33%',
-    height: '100%',
+    width: "33%",
+    height: "100%",
     backgroundColor: Colors.primary,
     borderRadius: 3,
+  },
+  escanearBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: Colors.primaryLight,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    padding: 16,
+    marginBottom: 8,
+  },
+  escanearTitulo: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: Colors.text,
+  },
+  escanearSub: {
+    fontSize: 12,
+    color: Colors.textLight,
+    marginTop: 2,
   },
   form: {
     flex: 1,
   },
-  label: { 
-    fontSize: 13, 
-    fontWeight: '500',
-    color: Colors.text, 
-    marginBottom: 8, 
-    marginTop: 16 
+  label: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: Colors.text,
+    marginBottom: 8,
+    marginTop: 16,
   },
   input: {
     borderWidth: 1,
@@ -185,18 +243,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
   },
   siguienteBtn: {
     backgroundColor: Colors.primary,
     borderRadius: 12,
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 40,
   },
-  siguienteTexto: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    fontSize: 16 
+  siguienteTexto: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
