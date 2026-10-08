@@ -1,24 +1,41 @@
-import React from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../constants/colors';
 import { HOSPITALES } from '../data/hospitals';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function DetalleHospital() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const hospital = HOSPITALES.find((h) => h.id === id) ?? HOSPITALES[0];
 
+  const abrirMapa = () => {
+    if (!hospital.lat || !hospital.lon) return;
+    
+    const url = Platform.select({
+      ios: `maps:0,0?q=${hospital.nombre}@${hospital.lat},${hospital.lon}`,
+      android: `geo:0,0?q=${hospital.lat},${hospital.lon}(${hospital.nombre})`,
+    });
+    
+    if (url) Linking.openURL(url);
+  };
+
   return (
     <ScrollView style={styles.container} bounces={false}>
       
       {/* Contenedor de la Imagen y el Header */}
       <View style={styles.imageContainer}>
-        {/* Simulamos la foto del hospital con un fondo gris y un ícono */}
-        <View style={styles.imagePlaceholder}>
-          <Ionicons name="business" size={60} color={Colors.border} />
-        </View>
+        {/* Si el hospital tiene imagen, la mostramos. Si no, va el gris con el ícono. */}
+        {hospital.imagen ? (
+  <Image 
+    source={hospital.imagen} 
+    style={styles.headerImage} 
+  />
+) : (
+          <View style={styles.imagePlaceholder}>
+            <Ionicons name="business" size={60} color={Colors.border} />
+          </View>
+        )}
 
         {/* Botón flotante para volver atrás */}
         <Pressable style={styles.backButton} onPress={() => router.back()}>
@@ -29,6 +46,12 @@ export default function DetalleHospital() {
       <View style={styles.body}>
         <Text style={styles.nombre}>{hospital.nombre}</Text>
         <Text style={styles.direccion}>📍 {hospital.direccion}</Text>
+
+
+        <Pressable onPress={abrirMapa} style={styles.mapaLink}>
+          <Ionicons name="map" size={16} color={Colors.primary} />
+          <Text style={styles.mapaTexto}>Ir a mapas</Text>
+        </Pressable>
 
         {/* Cajas de Estadísticas */}
         <View style={styles.statsRow}>
@@ -93,6 +116,11 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'relative',
   },
+  headerImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover', // Para que la imagen llene todo el espacio y no se deforme
+  },
   imagePlaceholder: {
     flex: 1,
     backgroundColor: '#E5E7EB',
@@ -123,6 +151,18 @@ const styles = StyleSheet.create({
     fontSize: 14, 
     color: Colors.textLight, 
     marginTop: 6 
+  },
+  mapaLink: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginTop: 8, 
+    gap: 6 
+  },
+  mapaTexto: { 
+    fontSize: 14, 
+    color: Colors.primary, 
+    fontWeight: '600', 
+    textDecorationLine: 'underline' 
   },
   statsRow: { 
     flexDirection: 'row', 

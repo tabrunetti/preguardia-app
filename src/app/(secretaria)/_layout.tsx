@@ -2,11 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { Colors } from '../../constants/colors';
 
-export default function AdminLayout() {
+export default function AdminTabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, // Oculta el header predeterminado
+        headerShown: false,
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textLight,
         tabBarStyle: {
@@ -23,23 +23,39 @@ export default function AdminLayout() {
         }
       }}
     >
-      {/* Pestaña 1: Tu pantalla actual para crear usuarios */}
       <Tabs.Screen
-        name="home"
+        name="ingreso"
         options={{
-          title: 'Crear',
+          title: 'Ingreso',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-add-outline" size={size} color={color} />
           ),
         }}
       />
-      {/* Pestaña 2: La nueva pantalla para borrar */}
       <Tabs.Screen
-        name="borrar"
+        name="turnos"
         options={{
-          title: 'Borrar',
+          title: 'Espera',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="trash-outline" size={size} color={color} />
+            <Ionicons name="list-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="historial"
+        options={{
+          title: 'Historial',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="time-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="perfil"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
       />

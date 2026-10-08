@@ -38,6 +38,12 @@
         {
           "cameraPermission": "PreGuardia usa la cámara para leer el código de tu DNI y completar tus datos automáticamente."
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Necesitamos tu ubicación para mostrarte las guardias más cercanas a vos."
+        }
       ]
     ],
     "experiments": {

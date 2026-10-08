@@ -16,19 +16,30 @@ export default function SplashLogin() {
   const [password, setPassword] = useState("");
 
 const handleIngresar = () => {
-    // 1. Verificamos si es admin
-    if (email.toLowerCase() === "admin@hospital.com" && password === "admin123") {
-      router.replace("/(admin)/ingreso");
+    // Limpiamos espacios y pasamos a minúsculas para evitar errores de tipeo
+    const correo = email.toLowerCase().trim();
+
+    // 1. Nuevo Admin Gerencial
+    if (correo === "admin@hospital.com") {
+      router.replace("/(admin)/home");
+      return;
     } 
-    // 2. Usamos 'else if' para el profesional
-    else if (email.toLowerCase() === "profesional@hospital.com" && password === "profesional123") {
+    
+    // 2. Secretaria (Tu antiguo rol de admin en recepción)
+    if (correo === "secretaria@hospital.com") {
+      // Como le cambiamos el nombre a la carpeta, ahora apunta a (secretaria)
+      router.replace("/(secretaria)/ingreso"); 
+      return;
+    } 
+    
+    // 3. Ambulancia / Profesional
+    if (correo === "ambulancia@hospital.com" || correo === "profesional@hospital.com") {
       router.replace("/ambulancia/home"); 
+      return;
     } 
-    // 3. Si no es ninguno de los anteriores, es un paciente
-    else {
-      // Actualizado al nuevo nombre de tu carpeta: (paciente)
-      router.replace("/(paciente)/home");
-    }
+    
+    // 4. Paciente (Si no es ninguno de los de arriba, entra como paciente)
+    router.replace("/(paciente)/home");
   };
 
   const handleCrearCuenta = () => {
