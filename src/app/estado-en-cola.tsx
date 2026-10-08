@@ -87,7 +87,7 @@ export default function EstadoEnCola() {
         <View style={styles.footer}>
           <Pressable
             style={[styles.llegueBtn, esEmergencia && styles.llegueBtnEmergencia]}
-            onPress={() => router.replace('/home')}
+            onPress={() => router.replace('/(paciente)/home')}
           >
             <Text style={[styles.llegueTexto, esEmergencia && { color: Colors.danger }]}>
               {esEmergencia ? '🚨 LLEGUÉ AL HOSPITAL' : '📍 Ya llegué al hospital'}
