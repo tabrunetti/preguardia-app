@@ -1,15 +1,14 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors'; 
+import { Tabs } from 'expo-router';
+import { Colors } from '../../constants/colors';
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, // Ocultamos el header de arriba
-        tabBarActiveTintColor: Colors.primary, // Color del ícono cuando estás en la pestaña
-        tabBarInactiveTintColor: Colors.textLight, // Color cuando está inactiva
+        headerShown: false, 
+        tabBarActiveTintColor: Colors.primary, 
+        tabBarInactiveTintColor: Colors.textLight, 
         tabBarStyle: {
           backgroundColor: Colors.background,
           borderTopWidth: 1,

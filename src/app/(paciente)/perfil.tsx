@@ -43,7 +43,6 @@ export default function PerfilScreen() {
         
         <Text style={styles.tituloPrincipal}>Mi Perfil</Text>
 
-        {/* --- Sección: Datos estáticos con opción a editar --- */}
         <View style={styles.datosEstaticosCard}>
           <View style={styles.datosHeader}>
             <Text style={styles.datosEstaticosTitulo}>Datos básicos</Text>
@@ -74,16 +73,13 @@ export default function PerfilScreen() {
           </View>
         </View>
 
-        {/* --- Sección: Contacto --- */}
         <Text style={styles.seccionTitulo}>¿Dónde te contactamos?</Text>
         <CampoEditable label="Email" valor={USER_DATA.email} placeholder="Ingresá un email" />
         <CampoEditable label="Teléfono celular" valor={USER_DATA.celular} placeholder="Ingresá un teléfono celular" />
 
-        {/* --- Sección: Dirección --- */}
         <Text style={styles.seccionTitulo}>¿Cuál es tu dirección?</Text>
         <CampoEditable label="Dirección de residencia" valor={USER_DATA.direccion} placeholder="Ingresá tu dirección" />
 
-        {/* Botón de Cerrar Sesión */}
         <Pressable style={styles.logoutBtn} onPress={handleCerrarSesion}>
           <Ionicons name="log-out-outline" size={20} color={Colors.danger} />
           <Text style={styles.logoutTexto}>Cerrar sesión</Text>

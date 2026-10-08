@@ -32,7 +32,7 @@ export default function SecretariaTabsLayout() {
           ),
         }}
       />
-      {/* NUEVA PESTAÑA: Solicitudes pendientes */}
+      
       <Tabs.Screen
         name="solicitudes"
         options={{
@@ -70,11 +70,11 @@ export default function SecretariaTabsLayout() {
         }}
       />
 
-      {/* AGREGÁ ESTE BLOQUE PARA OCULTAR LA FICHA MÉDICA */}
+     
       <Tabs.Screen
         name="detallePaciente"
         options={{
-          href: null, // Esto es lo que la hace invisible en la barra
+          href: null,
         }}
       />
     </Tabs>

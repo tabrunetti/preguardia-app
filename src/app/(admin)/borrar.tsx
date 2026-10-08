@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Alert, FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-// Base de datos simulada de personal
 const MOCK_USUARIOS = [
   { id: '1', email: 'secretaria@hospital', rol: 'Secretaría' },
   { id: '2', email: 'ambulancia@hospital', rol: 'Ambulancia' },
@@ -14,7 +13,7 @@ export default function BorrarUsuarios() {
   const [usuarios, setUsuarios] = useState(MOCK_USUARIOS);
 
   const handleBorrar = (id: string, email: string) => {
-    // Alerta nativa de confirmación
+    
     Alert.alert(
       "Eliminar Acceso",
       `¿Estás seguro que querés borrar la cuenta de ${email}? No podrá volver a ingresar al sistema.`,
@@ -24,7 +23,7 @@ export default function BorrarUsuarios() {
           text: "Eliminar", 
           style: "destructive",
           onPress: () => {
-            // Filtramos la lista para sacar al usuario borrado
+        
             setUsuarios(prev => prev.filter(u => u.id !== id));
             Alert.alert('Listo', 'El usuario fue eliminado correctamente.');
           }

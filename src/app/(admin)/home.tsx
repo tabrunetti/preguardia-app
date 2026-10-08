@@ -40,7 +40,6 @@ export default function AdminHome() {
 
         <Text style={styles.subtitulo}>Crear nueva cuenta de acceso</Text>
 
-        {/* Selección de Rol */}
         <View style={styles.rolesContainer}>
           <Pressable 
             style={[styles.rolBtn, rolSeleccionado === 'Secretaria' && styles.rolBtnActivo]}
@@ -59,7 +58,6 @@ export default function AdminHome() {
           </Pressable>
         </View>
 
-        {/* Formulario */}
         <View style={styles.form}>
           <Text style={styles.label}>Nombre completo</Text>
           <TextInput

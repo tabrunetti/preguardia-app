@@ -53,7 +53,7 @@ export default function AdminTurnosCola() {
       <View style={styles.actionsContainer}>
          <Pressable 
             style={styles.infoBtn} 
-            // Pasamos los datos del paciente a la nueva pantalla
+         
             onPress={() => router.push({ pathname: '/(secretaria)/detallePaciente', params: { nombre: item.nombre, motivo: item.motivo, nivel: item.nivel, edad: item.edad, presion: item.presion } })}
          >
           <Ionicons name="information-circle-outline" size={24} color={Colors.primary} />

@@ -3,7 +3,7 @@ export type DatosDni = {
   nombres: string;
   dni: string;
   sexo?: string;
-  fechaNacimiento: string; // DD/MM/AAAA
+  fechaNacimiento: string; 
 };
 
 const esFecha = (s: string) => /^\d{2}\/\d{2}\/\d{4}$/.test(s);
@@ -19,8 +19,6 @@ export function formatearDni(dni: string): string {
 export function parsearDni(raw: string): DatosDni | null {
   const campos = raw.split("@").map((c) => c.trim());
 
-  // DNI tarjeta nuevo:
-  // TRAMITE@APELLIDO@NOMBRES@SEXO@DNI@EJEMPLAR@NACIMIENTO@EMISION@...
   if (campos.length >= 8 && esNumeroDni(campos[4]) && esFecha(campos[6])) {
     return {
       apellido: capitalizar(campos[1]),
@@ -31,8 +29,6 @@ export function parsearDni(raw: string): DatosDni | null {
     };
   }
 
-  // DNI viejo (empieza con @):
-  // @DNI@EJEMPLAR@?@APELLIDO@NOMBRES@NACIONALIDAD@NACIMIENTO@SEXO@...
   if (campos.length >= 9 && esNumeroDni(campos[1]) && esFecha(campos[7])) {
     return {
       apellido: capitalizar(campos[4]),

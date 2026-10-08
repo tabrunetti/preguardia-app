@@ -6,7 +6,7 @@ export default function AdminLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, // Oculta el header predeterminado
+        headerShown: false, 
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textLight,
         tabBarStyle: {
@@ -23,7 +23,6 @@ export default function AdminLayout() {
         }
       }}
     >
-      {/* Pestaña 1: Tu pantalla actual para crear usuarios */}
       <Tabs.Screen
         name="home"
         options={{
@@ -33,7 +32,6 @@ export default function AdminLayout() {
           ),
         }}
       />
-      {/* Pestaña 2: La nueva pantalla para borrar */}
       <Tabs.Screen
         name="borrar"
         options={{

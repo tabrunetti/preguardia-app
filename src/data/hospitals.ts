@@ -11,7 +11,7 @@ export type Hospital = {
   direccion: string;
   lat?: number;
   lon?: number;
-  // Cambiamos string por any para que acepte archivos locales
+  
   imagen?: any; 
   distanciaTiempo: string;
   enEspera: number;
@@ -27,7 +27,7 @@ export const HOSPITALES: Hospital[] = [
     direccion: 'La Boca, CABA',
     lat: -34.627667,
     lon: -58.365942,
-    // Ruta relativa desde la carpeta data hacia la carpeta assets
+   
     imagen: require('../../assets/images/argerich.jpg'), 
     distanciaTiempo: '~45 min',
     enEspera: 12,

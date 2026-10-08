@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../constants/colors';
 import { BanderasRojas, hayBanderaRoja } from '../utils/triage';
-import { Ionicons } from '@expo/vector-icons';
 
 const PREGUNTAS: { key: keyof BanderasRojas; texto: string }[] = [
   { key: 'dificultadRespiratoria', texto: '¿Tiene dificultad para respirar en este momento?' },
@@ -19,7 +19,6 @@ export default function BanderasRojasScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  // Por defecto, asumimos que no hay banderas rojas (todo en false)
   const [respuestas, setRespuestas] = useState<BanderasRojas>({
     dificultadRespiratoria: false,
     dolorPechoConSintomas: false,
@@ -34,7 +33,7 @@ export default function BanderasRojasScreen() {
     const bandera = hayBanderaRoja(respuestas);
 
     if (bandera.activa) {
-      // Si marcó algún "Sí", es emergencia, salta directo al final en Rojo
+     
       router.push(
         `/estado-en-cola?id=${id}&nivel=Emergencia&color=%23EF4444&colorNombre=Rojo&motivo=${encodeURIComponent(
           bandera.motivo ?? ''
@@ -43,7 +42,6 @@ export default function BanderasRojasScreen() {
       return;
     }
 
-    // Si todo es "No", pasa al cuestionario normal
     router.push(`/cuestionario-triaje?id=${id}`);
   };
 
@@ -51,7 +49,6 @@ export default function BanderasRojasScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color={Colors.text} />
@@ -59,7 +56,6 @@ export default function BanderasRojasScreen() {
           <Text style={styles.paso}>Paso 2 de 3</Text>
         </View>
 
-        {/* Título y Barra de progreso */}
         <Text style={styles.titulo}>Antes de continuar</Text>
         <View style={styles.progressBar}>
           <View style={styles.progressFill} />
@@ -68,7 +64,6 @@ export default function BanderasRojasScreen() {
           Estas preguntas nos ayudan a detectar situaciones que requieren atención inmediata. Respondé con sinceridad.
         </Text>
 
-        {/* Lista de Preguntas */}
         <View style={styles.preguntasContainer}>
           {PREGUNTAS.map((p) => (
             <View key={p.key} style={styles.preguntaRow}>

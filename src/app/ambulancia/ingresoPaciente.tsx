@@ -2,15 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { Colors } from "../../constants/colors";
 import { HOSPITALES } from "../../data/hospitals";
@@ -111,14 +111,12 @@ export default function IngresoPaciente() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const hospital = HOSPITALES.find((h) => h.id === id) ?? HOSPITALES[0];
 
-  // Identificación
   const [noIdentificado, setNoIdentificado] = useState(false);
   const [nombre, setNombre] = useState("");
   const [dni, setDni] = useState("");
   const [edad, setEdad] = useState("");
   const [sexo, setSexo] = useState<(typeof SEXOS)[number] | null>(null);
 
-  // Situación clínica
   const [conciencia, setConciencia] = useState<
     (typeof CONCIENCIA)[number] | null
   >(null);
@@ -127,7 +125,6 @@ export default function IngresoPaciente() {
   >(null);
   const [sintomas, setSintomas] = useState("");
 
-  // Signos vitales
   const [tension, setTension] = useState("");
   const [fc, setFc] = useState("");
   const [fr, setFr] = useState("");
@@ -136,7 +133,6 @@ export default function IngresoPaciente() {
   const [glucemia, setGlucemia] = useState("");
   const [glasgow, setGlasgow] = useState("");
 
-  // Traslado
   const [prioridad, setPrioridad] = useState<
     (typeof PRIORIDADES)[number] | null
   >(null);
@@ -170,7 +166,6 @@ export default function IngresoPaciente() {
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
           <View style={styles.header}>
             <Pressable onPress={() => router.back()} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color={Colors.emergencia} />
@@ -193,7 +188,6 @@ export default function IngresoPaciente() {
             </Text>
           </View>
 
-          {/* Identificación */}
           <Text style={styles.seccion}>Identificación</Text>
           <Pressable
             style={styles.checkboxRow}
@@ -238,7 +232,6 @@ export default function IngresoPaciente() {
           <Text style={styles.subLabel}>Sexo</Text>
           <Selector opciones={SEXOS} valor={sexo} onChange={setSexo} />
 
-          {/* Situación clínica */}
           <Text style={styles.seccion}>Situación clínica</Text>
           <Text style={styles.subLabel}>Estado de conciencia</Text>
           <Selector
@@ -263,8 +256,6 @@ export default function IngresoPaciente() {
             value={sintomas}
             onChangeText={setSintomas}
           />
-
-          {/* Signos vitales */}
           <Text style={styles.seccion}>Signos vitales</Text>
           <View style={styles.grid}>
             <Campo
@@ -312,7 +303,6 @@ export default function IngresoPaciente() {
             />
           </View>
 
-          {/* Traslado */}
           <Text style={styles.seccion}>Traslado</Text>
           <Text style={styles.subLabel}>Prioridad estimada</Text>
           <Selector

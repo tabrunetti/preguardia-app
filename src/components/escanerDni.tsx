@@ -1,18 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import {
-    BarcodeScanningResult,
-    CameraView,
-    useCameraPermissions,
+  BarcodeScanningResult,
+  CameraView,
+  useCameraPermissions,
 } from "expo-camera";
 import { useRef, useState } from "react";
 import {
-    Linking,
-    Modal,
-    Pressable,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
+  Linking,
+  Modal,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { Colors } from "../constants/colors";
 import { DatosDni, parsearDni } from "../utils/dni";
@@ -89,7 +89,6 @@ export default function EscanerDni({ visible, onClose, onEscaneado }: Props) {
           onBarcodeScanned={handleScan}
         />
 
-        {/* Overlay con el marco guía */}
         <View style={styles.overlay} pointerEvents="none">
           <Text style={styles.instruccion}>
             Apuntá al código de barras del frente de tu DNI

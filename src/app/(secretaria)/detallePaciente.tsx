@@ -5,7 +5,7 @@ import { Colors } from '../../constants/colors';
 
 export default function DetallePaciente() {
   const router = useRouter();
-  // Recibimos los parámetros
+
   const { nombre, motivo, nivel, edad, presion } = useLocalSearchParams<{
     nombre: string;
     motivo: string;

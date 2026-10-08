@@ -23,9 +23,8 @@ export default function DetalleHospital() {
   return (
     <ScrollView style={styles.container} bounces={false}>
       
-      {/* Contenedor de la Imagen y el Header */}
       <View style={styles.imageContainer}>
-        {/* Si el hospital tiene imagen, la mostramos. Si no, va el gris con el ícono. */}
+        
         {hospital.imagen ? (
   <Image 
     source={hospital.imagen} 
@@ -37,7 +36,6 @@ export default function DetalleHospital() {
           </View>
         )}
 
-        {/* Botón flotante para volver atrás */}
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={Colors.text} />
         </Pressable>
@@ -53,7 +51,6 @@ export default function DetalleHospital() {
           <Text style={styles.mapaTexto}>Ir a mapas</Text>
         </Pressable>
 
-        {/* Cajas de Estadísticas */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={[styles.statValor, { color: Colors.primary }]}>{hospital.enEspera}</Text>
@@ -71,14 +68,13 @@ export default function DetalleHospital() {
 
         <Text style={styles.seccion}>Estado actual de la Guardia (por nivel)</Text>
 
-        {/* Lista de niveles de triaje */}
         <View style={styles.nivelesContainer}>
           {hospital.niveles.map((n, index) => (
             <View 
               key={n.nivel} 
               style={[
                 styles.nivelRow, 
-                index === hospital.niveles.length - 1 && { borderBottomWidth: 0 } // Saca la línea al último
+                index === hospital.niveles.length - 1 && { borderBottomWidth: 0 }  
               ]}
             >
               <View style={styles.nivelLeft}>
@@ -93,7 +89,6 @@ export default function DetalleHospital() {
         </View>
       </View>
 
-      {/* Botón de acción principal */}
       <Pressable
         style={styles.preRegistroBtn}
         onPress={() =>
@@ -119,7 +114,7 @@ const styles = StyleSheet.create({
   headerImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover', // Para que la imagen llene todo el espacio y no se deforme
+    resizeMode: 'cover', 
   },
   imagePlaceholder: {
     flex: 1,
@@ -182,9 +177,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   statValor: { 
-    fontSize: 18, // Lo bajamos de 20 a 18 para que entre mejor
+    fontSize: 18, 
     fontWeight: 'bold',
-    textAlign: 'center' // Esto fuerza a que si se divide en dos líneas, quede al medio
+    textAlign: 'center' 
   },
   statLabel: { 
     fontSize: 11, 

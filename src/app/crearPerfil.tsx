@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  Pressable, 
-  StyleSheet, 
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
   SafeAreaView,
   ScrollView,
-  KeyboardAvoidingView,
-  Platform
+  StyleSheet,
+  Text,
+  TextInput,
+  View
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Colors } from '../constants/colors';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function CrearPerfil() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function CrearPerfil() {
   const [password, setPassword] = useState('');
 
   const handleRegistrarse = () => {
-    // Simulamos que se creó la cuenta y lo mandamos directo a la app
+   
     router.replace('/home');
   };
 
@@ -33,18 +33,15 @@ export default function CrearPerfil() {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           
-          {/* Header con botón atrás */}
           <View style={styles.header}>
             <Pressable onPress={() => router.back()} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color={Colors.text} />
             </Pressable>
           </View>
 
-          {/* Títulos */}
           <Text style={styles.titulo}>Crear nueva cuenta</Text>
           <Text style={styles.subtitulo}>Ingresá tus datos para empezar a usar PreGuardia y evitar esperas.</Text>
 
-          {/* Formulario */}
           <View style={styles.form}>
             <Text style={styles.label}>Nombre y Apellido</Text>
             <TextInput
@@ -77,7 +74,6 @@ export default function CrearPerfil() {
             />
           </View>
 
-          {/* Botón Principal */}
           <Pressable style={styles.primaryButton} onPress={handleRegistrarse}>
             <Text style={styles.primaryButtonText}>Registrarme</Text>
           </Pressable>

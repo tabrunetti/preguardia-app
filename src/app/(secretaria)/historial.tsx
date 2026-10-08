@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-// Agregamos edad y presión al historial para enviarlos al detalle
+
 const HISTORIAL_ATENDIDOS = [
   { id: '101', nombre: 'Martín Pérez', motivo: 'Cefalea intensa', nivel: 'Verde', hora: '14:30', edad: 34, presion: '120/80' },
   { id: '102', nombre: 'Sofía Castro', motivo: 'Traumatismo de rodilla', nivel: 'Amarillo', hora: '13:15', edad: 25, presion: '110/70' },
@@ -16,7 +16,6 @@ export default function SecretariaHistorial() {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState('');
 
-  // Filtramos solo por nombre de paciente
   const pacientesFiltrados = HISTORIAL_ATENDIDOS.filter((item) => 
     item.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -34,7 +33,6 @@ export default function SecretariaHistorial() {
           <Text style={styles.badgeText}>Prioridad: {item.nivel}</Text>
         </View>
 
-        {/* Nuevo botón de Información */}
         <Pressable 
           style={styles.infoBtn} 
           onPress={() => router.push({ 

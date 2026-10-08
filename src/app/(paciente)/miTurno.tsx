@@ -7,13 +7,11 @@ import { Colors } from '../../constants/colors';
 export default function MiTurnoScreen() {
   const router = useRouter();
   
-  // Estado para simular si el usuario tiene un turno activo o no
   const [tieneTurno, setTieneTurno] = useState(true);
 
   return (
     <SafeAreaView style={styles.container}>
       
-      {/* Header con el botón para cambiar de estado (solo para la demo) */}
       <View style={styles.header}>
         <Text style={styles.tituloPrincipal}>Mi Turno</Text>
         <Pressable 
@@ -29,7 +27,6 @@ export default function MiTurnoScreen() {
         
         {!tieneTurno ? (
           
-          /* --- ESTADO 1: SIN TURNO ACTIVO --- */
           <View style={styles.emptyStateContainer}>
             <View style={styles.emptyIconCircle}>
               <Ionicons name="calendar-clear-outline" size={60} color={Colors.textLight} />
@@ -42,12 +39,11 @@ export default function MiTurnoScreen() {
 
         ) : (
 
-          /* --- ESTADO 2: CON TURNO ACTIVO (Ticket) --- */
           <View>
             <Text style={styles.subtitulo}>Información de tu pre-registro actual</Text>
 
             <View style={styles.ticketContainer}>
-              {/* Cabecera del Ticket */}
+         
               <View style={styles.ticketHeader}>
                 <View style={styles.hospitalInfo}>
                   <Ionicons name="business" size={24} color={Colors.primary} />
@@ -64,10 +60,8 @@ export default function MiTurnoScreen() {
                 <View style={[styles.ticketNotch, styles.notchRight]} />
               </View>
 
-              {/* Cuerpo del Ticket */}
               <View style={styles.ticketBody}>
                 
-                {/* NUEVO MENSAJE DE ASIGNACIÓN DE POSICIÓN */}
                 <View style={styles.avisoBox}>
                   <Ionicons name="time-outline" size={24} color={Colors.primary} />
                   <Text style={styles.avisoText}>
@@ -86,7 +80,6 @@ export default function MiTurnoScreen() {
               </View>
             </View>
 
-            {/* Acciones */}
             <Pressable style={styles.llegueBtn} onPress={() => setTieneTurno(false)}>
               <Text style={styles.llegueTexto}>📍 Ya llegué al hospital</Text>
             </Pressable>
@@ -118,7 +111,6 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 24, paddingBottom: 40, flexGrow: 1 },
   subtitulo: { fontSize: 15, color: Colors.textLight, marginBottom: 20 },
 
-  // Estilos del Estado Vacío
   emptyStateContainer: {
     flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 60,
   },
@@ -129,7 +121,6 @@ const styles = StyleSheet.create({
   emptyTitulo: { fontSize: 20, fontWeight: 'bold', color: Colors.text, marginBottom: 12 },
   emptySubtitulo: { fontSize: 14, color: Colors.textLight, textAlign: 'center', paddingHorizontal: 20, lineHeight: 20, marginBottom: 32 },
 
-  // Estilos del Ticket
   ticketContainer: {
     backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: Colors.border,
     marginBottom: 32,
@@ -148,7 +139,6 @@ const styles = StyleSheet.create({
 
   ticketBody: { padding: 20 },
   
-  // Estilos del nuevo aviso
   avisoBox: { 
     flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.primary + '10', 
     padding: 16, borderRadius: 12, marginBottom: 20, borderWidth: 1, borderColor: Colors.primary + '30', gap: 12 
@@ -166,7 +156,6 @@ const styles = StyleSheet.create({
   infoBox: { flexDirection: 'row', backgroundColor: '#FAFAFA', padding: 12, borderRadius: 8, alignItems: 'center' },
   infoText: { flex: 1, fontSize: 12, color: Colors.textLight, marginLeft: 8, lineHeight: 18 },
 
-  // Botones
   llegueBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 16, alignItems: 'center', marginBottom: 12 },
   llegueTexto: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   cancelarBtn: { paddingVertical: 12, alignItems: 'center' },

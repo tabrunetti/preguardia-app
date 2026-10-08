@@ -23,7 +23,7 @@ export default function AdminNuevoIngreso() {
       return;
     }
     Alert.alert('Éxito', `Paciente ${nombre} registrado en cola con prioridad ${nivelActivo}.`);
-    // Limpiamos los campos
+  
     setDni(''); setNombre(''); setMotivo(''); setNivelActivo('Amarillo');
   };
 

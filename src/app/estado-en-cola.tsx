@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, SafeAreaView } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../constants/colors';
 import { HOSPITALES } from '../data/hospitals';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function EstadoEnCola() {
   const router = useRouter();
@@ -17,7 +17,6 @@ export default function EstadoEnCola() {
 
   const hospital = HOSPITALES.find((h) => h.id === id) ?? HOSPITALES[0];
 
-  // Simulamos datos de la fila
   const [posicion] = useState(() => Math.floor(Math.random() * 8) + 3);
   const [esperaMin] = useState(() => Math.floor(Math.random() * 30) + 15);
 
@@ -27,7 +26,6 @@ export default function EstadoEnCola() {
     <SafeAreaView style={[styles.container, esEmergencia && styles.containerEmergencia]}>
       <View style={styles.content}>
         
-        {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.headerTitulo, esEmergencia && styles.textoBlanco]}>
             {esEmergencia ? 'Registro de Emergencia' : 'Tu pre-registro está activo'}
@@ -38,7 +36,7 @@ export default function EstadoEnCola() {
         </View>
 
         {esEmergencia ? (
-          // VISTA DE EMERGENCIA
+         
           <View style={styles.alertaBox}>
             <Ionicons name="warning" size={40} color="#fff" style={{ marginBottom: 12 }} />
             <Text style={styles.alertaTitulo}>Nivel de Triaje: Rojo (Emergencia)</Text>
@@ -53,16 +51,13 @@ export default function EstadoEnCola() {
             )}
           </View>
         ) : (
-          // VISTA ESTÁNDAR
+     
           <View style={styles.vistaEstandar}>
             
-            {/* Círculo de Posición */}
             <View style={styles.posicionCirculo}>
               <Text style={styles.posicionLabel}>TU POSICIÓN</Text>
               <Text style={styles.posicionNumero}>#{posicion}</Text>
             </View>
-
-            {/* Tarjeta de Nivel */}
             <View style={[styles.nivelBox, { backgroundColor: `${color}15`, borderColor: color }]}>
               <View style={styles.nivelHeader}>
                 <View style={[styles.dot, { backgroundColor: color }]} />
@@ -75,7 +70,6 @@ export default function EstadoEnCola() {
               </Text>
             </View>
 
-            {/* Tarjeta de Espera */}
             <View style={styles.esperaBox}>
               <View style={styles.esperaRow}>
                 <Ionicons name="time-outline" size={24} color={Colors.textLight} />
@@ -90,7 +84,6 @@ export default function EstadoEnCola() {
           </View>
         )}
 
-        {/* Botones Inferiores */}
         <View style={styles.footer}>
           <Pressable
             style={[styles.llegueBtn, esEmergencia && styles.llegueBtnEmergencia]}

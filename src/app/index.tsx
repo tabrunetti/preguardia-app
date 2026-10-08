@@ -16,29 +16,25 @@ export default function SplashLogin() {
   const [password, setPassword] = useState("");
 
 const handleIngresar = () => {
-    // Limpiamos espacios y pasamos a minúsculas para evitar errores de tipeo
+    
     const correo = email.toLowerCase().trim();
 
-    // 1. Nuevo Admin Gerencial
     if (correo === "admin@hospital.com") {
       router.replace("/(admin)/home");
       return;
     } 
     
-    // 2. Secretaria (Tu antiguo rol de admin en recepción)
     if (correo === "secretaria@hospital.com") {
-      // Como le cambiamos el nombre a la carpeta, ahora apunta a (secretaria)
+      
       router.replace("/(secretaria)/ingreso"); 
       return;
     } 
     
-    // 3. Ambulancia / Profesional
     if (correo === "ambulancia@hospital.com" || correo === "profesional@hospital.com") {
       router.replace("/ambulancia/home"); 
       return;
     } 
     
-    // 4. Paciente (Si no es ninguno de los de arriba, entra como paciente)
     router.replace("/(paciente)/home");
   };
 
@@ -49,7 +45,7 @@ const handleIngresar = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* Logo */}
+       
         <View style={styles.logoContainer}>
           <View style={styles.logo}>
             <Text style={styles.logoIcon}>🏥</Text>
@@ -60,7 +56,6 @@ const handleIngresar = () => {
           </Text>
         </View>
 
-        {/* Formulario */}
         <View style={styles.form}>
           <Text style={styles.label}>Correo electrónico</Text>
           <TextInput
@@ -94,7 +89,6 @@ const handleIngresar = () => {
           </Pressable>
         </View>
 
-        {/* Texto Legal */}
         <Text style={styles.legal}>
           Al continuar, aceptás nuestros términos y políticas de salud pública.
         </Text>

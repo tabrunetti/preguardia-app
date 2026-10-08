@@ -51,7 +51,7 @@ export default function PreRegistro() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header con botón atrás y contador de pasos */}
+          
           <View style={styles.header}>
             <Pressable onPress={() => router.back()} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color={Colors.text} />
@@ -59,13 +59,11 @@ export default function PreRegistro() {
             <Text style={styles.paso}>Paso 1 de 3</Text>
           </View>
 
-          {/* Título y Barra de progreso */}
           <Text style={styles.titulo}>Datos Personales</Text>
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
 
-          {/* Botón escanear DNI */}
           <Pressable
             style={styles.escanearBtn}
             onPress={() => setEscanerVisible(true)}
@@ -84,7 +82,6 @@ export default function PreRegistro() {
             />
           </Pressable>
 
-          {/* Formulario */}
           <View style={styles.form}>
             <Text style={styles.label}>Nombre completo *</Text>
             <TextInput
@@ -149,7 +146,6 @@ export default function PreRegistro() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Modal del escáner */}
       <EscanerDni
         visible={escanerVisible}
         onClose={() => setEscanerVisible(false)}

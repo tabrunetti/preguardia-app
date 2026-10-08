@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform
+  Text,
+  TextInput,
+  View
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../constants/colors';
-import { Ionicons } from '@expo/vector-icons';
 import {
+  BanderasRojas,
   calcularNivelTriaje,
+  Evolucion,
   Motivo,
   TiempoSintomas,
-  Evolucion,
-  BanderasRojas,
 } from '../utils/triage';
 
 const MOTIVOS: Motivo[] = [
@@ -50,13 +50,11 @@ export default function CuestionarioTriaje() {
   const [enfermedadCronica, setEnfermedadCronica] = useState(false);
   const [embarazo, setEmbarazo] = useState(false);
 
-  // Valida que los campos obligatorios estén completos
   const formularioCompleto = motivo && escalaDolor !== null && tiempoSintomas && evolucion;
 
   const handleSiguiente = () => {
     if (!formularioCompleto) return;
 
-    // Calculamos el nivel de urgencia usando la lógica de tu amigo
     const resultado = calcularNivelTriaje(
       {
         motivo,
@@ -91,7 +89,6 @@ export default function CuestionarioTriaje() {
       >
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           
-          {/* Header */}
           <View style={styles.header}>
             <Pressable onPress={() => router.back()} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color={Colors.text} />
@@ -99,13 +96,11 @@ export default function CuestionarioTriaje() {
             <Text style={styles.paso}>Paso 3 de 3</Text>
           </View>
 
-          {/* Título y Barra de progreso */}
           <Text style={styles.titulo}>Síntomas y Motivo</Text>
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
 
-          {/* Motivo de Consulta */}
           <Text style={styles.label}>¿Cuál es su motivo de consulta principal?</Text>
           <View style={styles.chipsContainer}>
             {MOTIVOS.map((m) => (
@@ -119,7 +114,6 @@ export default function CuestionarioTriaje() {
             ))}
           </View>
 
-          {/* Escala de Dolor */}
           <Text style={styles.label}>Escala de Dolor (1 al 10)</Text>
           <View style={styles.escalaRow}>
             {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
@@ -139,7 +133,6 @@ export default function CuestionarioTriaje() {
             <Text style={styles.escalaLabelTexto}>Insoportable</Text>
           </View>
 
-          {/* Tiempos y Evolución */}
           <Text style={styles.label}>¿Hace cuánto comenzaron los síntomas?</Text>
           <View style={styles.chipsContainer}>
             {TIEMPOS.map((t) => (
@@ -166,7 +159,6 @@ export default function CuestionarioTriaje() {
             ))}
           </View>
 
-          {/* Detalle Opcional */}
           <Text style={styles.label}>Detalle adicional (Opcional)</Text>
           <TextInput
             style={styles.textArea}
@@ -178,7 +170,6 @@ export default function CuestionarioTriaje() {
             onChangeText={setDetalle}
           />
 
-          {/* Sección de Signos Vitales y Datos */}
           <View style={styles.divider} />
           <Text style={styles.seccionTitulo}>Signos vitales (Opcional)</Text>
 

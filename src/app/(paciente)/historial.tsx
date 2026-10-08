@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-// 1. Creamos los datos hardcodeados de ejemplo
 const HISTORIAL_MOCK = [
   {
     id: '1',
@@ -10,7 +9,7 @@ const HISTORIAL_MOCK = [
     hospital: 'Hospital de Clínicas José de San Martín',
     motivo: 'Dolor abdominal agudo',
     nivel: 'Amarillo',
-    color: Colors.warning, // Naranja/Amarillo
+    color: Colors.warning, 
     estado: 'Atendido',
   },
   {
@@ -19,7 +18,7 @@ const HISTORIAL_MOCK = [
     hospital: 'Hosp. Dr. Cosme Argerich',
     motivo: 'Fiebre persistente y malestar',
     nivel: 'Verde',
-    color: Colors.success, // Verde
+    color: Colors.success, 
     estado: 'Atendido',
   },
   {
@@ -28,14 +27,13 @@ const HISTORIAL_MOCK = [
     hospital: 'Hospital General de Agudos',
     motivo: 'Corte profundo en el brazo',
     nivel: 'Rojo',
-    color: Colors.danger, // Rojo
+    color: Colors.danger,
     estado: 'Atendido',
   },
 ];
 
 export default function HistorialScreen() {
   
-  // 2. Armamos el diseño de cada tarjetita del historial
   const renderItem = ({ item }: { item: typeof HISTORIAL_MOCK[0] }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -63,7 +61,6 @@ export default function HistorialScreen() {
     </View>
   );
 
-  // 3. Renderizamos la pantalla principal
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>

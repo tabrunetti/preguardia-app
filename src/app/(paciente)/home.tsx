@@ -16,7 +16,6 @@ import {
 import { Colors } from '../../constants/colors';
 import { HOSPITALES, Hospital } from '../../data/hospitals';
 
-// Fórmula de Haversine para calcular distancia en kilómetros
 function calcularDistancia(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; 
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -35,7 +34,6 @@ const demoraColor = (demora: Hospital['demora']) => {
   return Colors.success;
 };
 
-// Extendemos el tipo Hospital para agregarle la distancia calculada
 type HospitalConDistancia = Hospital & { distanciaKm?: number };
 
 export default function HomePaciente() {
@@ -46,7 +44,7 @@ export default function HomePaciente() {
 
   useEffect(() => {
     (async () => {
-      // 1. Pedimos permiso de GPS al usuario
+     
       const { status } = await Location.requestForegroundPermissionsAsync();
       
       if (status !== 'granted') {
@@ -56,7 +54,7 @@ export default function HomePaciente() {
       }
 
       try {
-        // 2. Obtenemos las coordenadas del celular
+     
         const ubicacion = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
         });
@@ -64,14 +62,12 @@ export default function HomePaciente() {
         const latUsuario = ubicacion.coords.latitude;
         const lonUsuario = ubicacion.coords.longitude;
 
-        // 3. Calculamos la distancia para cada hospital
         const hospitalesConDistancia = HOSPITALES.map(hospital => {
           if (!hospital.lat || !hospital.lon) return { ...hospital, distanciaKm: 999 };
           const distancia = calcularDistancia(latUsuario, lonUsuario, hospital.lat, hospital.lon);
           return { ...hospital, distanciaKm: distancia };
         });
 
-        // 4. Ordenamos de menor a mayor distancia
         const ordenados = hospitalesConDistancia.sort((a, b) => (a.distanciaKm || 0) - (b.distanciaKm || 0));
         setHospitalesOrdenados(ordenados);
 
@@ -192,11 +188,11 @@ const styles = StyleSheet.create({
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.05,
   shadowRadius: 4,
-  overflow: 'hidden', // Importante para que la imagen no se salga de los bordes redondeados
+  overflow: 'hidden', 
 },
 cardImage: {
   width: '100%',
-  height: 140, // Podés jugar con esta altura
+  height: 140, 
   backgroundColor: '#EEEEEE',
 },
 cardContent: {

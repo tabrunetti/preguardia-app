@@ -44,7 +44,6 @@ export default function PerfilAmbulancia() {
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header con avatar */}
         <View style={styles.header}>
           <View style={styles.avatar}>
             <Ionicons name="person" size={40} color={Colors.emergencia} />
@@ -53,7 +52,7 @@ export default function PerfilAmbulancia() {
         </View>
 
         <View style={styles.body}>
-          {/* Datos personales */}
+        
           <Text style={styles.seccion}>Datos personales</Text>
           <View style={styles.card}>
             <Fila
@@ -64,7 +63,6 @@ export default function PerfilAmbulancia() {
             <Fila icono="card-outline" label="DNI" valor={PROFESIONAL.dni} />
           </View>
 
-          {/* Contacto */}
           <Text style={styles.seccion}>Contacto</Text>
           <View style={styles.card}>
             <Fila

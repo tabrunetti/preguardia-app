@@ -20,7 +20,6 @@ const estadoGuardia = (demora: Hospital["demora"]) => {
   return { texto: "Disponible", color: Colors.success };
 };
 
-// Función para calcular la distancia en kilómetros (Fórmula de Haversine)
 const calcularDistancia = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -65,7 +64,6 @@ export default function AmbulanciaHome() {
       item.niveles.find((n) => n.nivel === "Urgente")?.pacientes ?? 0;
     const estado = estadoGuardia(item.demora);
 
-    // Si tenemos la ubicación del GPS y las coordenadas del hospital, calculamos la distancia real
     const distancia =
       ubicacionActual && item.lat && item.lon
         ? calcularDistancia(ubicacionActual.latitude, ubicacionActual.longitude, item.lat, item.lon)
