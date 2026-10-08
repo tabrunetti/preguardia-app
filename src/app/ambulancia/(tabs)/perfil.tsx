@@ -1,13 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
-    Alert,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
 } from "react-native";
 import { Colors } from "../../../constants/colors";
 
@@ -73,24 +72,9 @@ export default function PerfilAmbulancia() {
               label="Email"
               valor={PROFESIONAL.email}
             />
-            <Fila
-              icono="call-outline"
-              label="Teléfono"
-              valor={PROFESIONAL.telefono}
-            />
+            
           </View>
 
-          <Pressable
-            style={styles.editarBtn}
-            onPress={() =>
-              Alert.alert(
-                "En desarrollo",
-                "Acá se podrán editar los datos del profesional.",
-              )
-            }
-          >
-            <Text style={styles.editarTexto}>Editar datos</Text>
-          </Pressable>
 
           <Pressable
             style={styles.logoutBtn}

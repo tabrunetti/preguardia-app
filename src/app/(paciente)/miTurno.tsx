@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Colors } from '../../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '../../constants/colors';
 
 export default function MiTurnoScreen() {
   const router = useRouter();
@@ -38,12 +38,6 @@ export default function MiTurnoScreen() {
             <Text style={styles.emptySubtitulo}>
               Actualmente no estás registrado en ninguna fila de espera virtual.
             </Text>
-            <Pressable 
-              style={styles.primaryButton} 
-              onPress={() => router.replace('/home')}
-            >
-              <Text style={styles.primaryButtonText}>Buscar guardia cercana</Text>
-            </Pressable>
           </View>
 
         ) : (
@@ -72,16 +66,13 @@ export default function MiTurnoScreen() {
 
               {/* Cuerpo del Ticket */}
               <View style={styles.ticketBody}>
-                <View style={styles.statusRow}>
-                  <View style={styles.statusBox}>
-                    <Text style={styles.statusLabel}>Tu posición</Text>
-                    <Text style={styles.statusValue}>#3</Text>
-                  </View>
-                  <View style={styles.statusDivider} />
-                  <View style={styles.statusBox}>
-                    <Text style={styles.statusLabel}>Espera est.</Text>
-                    <Text style={styles.statusValue}>~20 min</Text>
-                  </View>
+                
+                {/* NUEVO MENSAJE DE ASIGNACIÓN DE POSICIÓN */}
+                <View style={styles.avisoBox}>
+                  <Ionicons name="time-outline" size={24} color={Colors.primary} />
+                  <Text style={styles.avisoText}>
+                    Al momento de confirmar que llegaste al hospital, se te asignará una posición en la sala.
+                  </Text>
                 </View>
 
                 <View style={styles.nivelBadge}>
@@ -91,12 +82,7 @@ export default function MiTurnoScreen() {
                   </Text>
                 </View>
 
-                <View style={styles.infoBox}>
-                  <Ionicons name="information-circle-outline" size={20} color={Colors.textLight} />
-                  <Text style={styles.infoText}>
-                    Al llegar a la recepción, mencioná tu DNI para validar este turno.
-                  </Text>
-                </View>
+                
               </View>
             </View>
 
@@ -142,8 +128,6 @@ const styles = StyleSheet.create({
   },
   emptyTitulo: { fontSize: 20, fontWeight: 'bold', color: Colors.text, marginBottom: 12 },
   emptySubtitulo: { fontSize: 14, color: Colors.textLight, textAlign: 'center', paddingHorizontal: 20, lineHeight: 20, marginBottom: 32 },
-  primaryButton: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 16, paddingHorizontal: 32, alignItems: 'center' },
-  primaryButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
 
   // Estilos del Ticket
   ticketContainer: {
@@ -163,15 +147,17 @@ const styles = StyleSheet.create({
   notchRight: { right: -11 },
 
   ticketBody: { padding: 20 },
-  statusRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  statusBox: { flex: 1, alignItems: 'center' },
-  statusLabel: { fontSize: 12, color: Colors.textLight, fontWeight: '500', marginBottom: 4 },
-  statusValue: { fontSize: 28, fontWeight: 'bold', color: Colors.text },
-  statusDivider: { width: 1, height: 40, backgroundColor: Colors.border },
+  
+  // Estilos del nuevo aviso
+  avisoBox: { 
+    flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.primary + '10', 
+    padding: 16, borderRadius: 12, marginBottom: 20, borderWidth: 1, borderColor: Colors.primary + '30', gap: 12 
+  },
+  avisoText: { flex: 1, fontSize: 13, color: Colors.text, fontWeight: '500', lineHeight: 18 },
 
   nivelBadge: { 
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.warning + '15', paddingVertical: 12, borderRadius: 12, marginBottom: 24,
+    backgroundColor: Colors.warning + '15', paddingVertical: 12, borderRadius: 12, marginBottom: 20,
     borderWidth: 1, borderColor: Colors.warning
   },
   dot: { width: 10, height: 10, borderRadius: 5, marginRight: 8 },

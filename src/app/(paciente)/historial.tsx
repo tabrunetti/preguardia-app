@@ -29,7 +29,7 @@ const HISTORIAL_MOCK = [
     motivo: 'Corte profundo en el brazo',
     nivel: 'Rojo',
     color: Colors.danger, // Rojo
-    estado: 'Derivado',
+    estado: 'Atendido',
   },
 ];
 

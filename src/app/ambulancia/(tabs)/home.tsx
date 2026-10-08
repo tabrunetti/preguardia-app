@@ -1,14 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from 'expo-location';
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    FlatList,
-    Pressable,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  FlatList,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { Colors } from "../../../constants/colors";
 import { HOSPITALES, Hospital } from "../../../data/hospitals";
@@ -19,9 +20,39 @@ const estadoGuardia = (demora: Hospital["demora"]) => {
   return { texto: "Disponible", color: Colors.success };
 };
 
+// Función para calcular la distancia en kilómetros (Fórmula de Haversine)
+const calcularDistancia = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return (R * c).toFixed(1) + " km";
+};
+
 export default function AmbulanciaHome() {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState("");
+  const [ubicacionActual, setUbicacionActual] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setUbicacionActual({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    })();
+  }, []);
 
   const hospitales = HOSPITALES.filter((h) =>
     h.nombre.toLowerCase().includes(busqueda.toLowerCase()),
@@ -33,6 +64,12 @@ export default function AmbulanciaHome() {
     const urgentes =
       item.niveles.find((n) => n.nivel === "Urgente")?.pacientes ?? 0;
     const estado = estadoGuardia(item.demora);
+
+    // Si tenemos la ubicación del GPS y las coordenadas del hospital, calculamos la distancia real
+    const distancia =
+      ubicacionActual && item.lat && item.lon
+        ? calcularDistancia(ubicacionActual.latitude, ubicacionActual.longitude, item.lat, item.lon)
+        : item.distanciaTiempo;
 
     return (
       <Pressable
@@ -63,7 +100,7 @@ export default function AmbulanciaHome() {
               size={16}
               color={Colors.emergencia}
             />
-            <Text style={styles.infoTexto}>{item.distanciaTiempo}</Text>
+            <Text style={styles.infoTexto}>{distancia}</Text>
           </View>
           <View style={styles.infoItem}>
             <Ionicons

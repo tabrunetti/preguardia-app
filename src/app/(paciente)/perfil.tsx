@@ -1,18 +1,15 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, SafeAreaView, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Colors } from '../../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '../../constants/colors';
 
 const USER_DATA = {
   nombre: 'Tiago Abel',
   apellido: 'Brunetti',
   fechaNacimiento: '26/05/2001',
   dni: '43.413.181',
-  apodo: 'Tiago',
   email: 'tiagobrunetti@hotmail.com',
   celular: null,
-  fijo: null,
   direccion: null,
 };
 
@@ -38,13 +35,6 @@ export default function PerfilScreen() {
 
   const handleCerrarSesion = () => {
     router.replace('/');
-  };
-
-  const handleDatosMedicos = () => {
-    Alert.alert(
-      'Datos Médicos',
-      'Esta sección está pendiente de diseño. Acá el paciente podrá cargar sus alergias, enfermedades crónicas y medicación.'
-    );
   };
 
   return (
@@ -84,35 +74,14 @@ export default function PerfilScreen() {
           </View>
         </View>
 
-        {/* --- Sección: Apodo --- */}
-        <Text style={styles.seccionTitulo}>¿Cuál es tu apodo?</Text>
-        <CampoEditable 
-          label="¿Cómo preferís que te llamemos?" 
-          valor={USER_DATA.apodo} 
-          placeholder="Ingresá tu apodo" 
-        />
-
         {/* --- Sección: Contacto --- */}
         <Text style={styles.seccionTitulo}>¿Dónde te contactamos?</Text>
         <CampoEditable label="Email" valor={USER_DATA.email} placeholder="Ingresá un email" />
         <CampoEditable label="Teléfono celular" valor={USER_DATA.celular} placeholder="Ingresá un teléfono celular" />
-        <CampoEditable label="Teléfono fijo" valor={USER_DATA.fijo} placeholder="Ingresá un teléfono fijo" />
 
         {/* --- Sección: Dirección --- */}
         <Text style={styles.seccionTitulo}>¿Cuál es tu dirección?</Text>
         <CampoEditable label="Dirección de residencia" valor={USER_DATA.direccion} placeholder="Ingresá tu dirección" />
-
-        {/* --- Sección: Datos Médicos (Placeholder) --- */}
-        <Text style={styles.seccionTitulo}>Información de salud</Text>
-        <Pressable style={styles.actionCard} onPress={handleDatosMedicos}>
-          <View style={styles.actionCardLeft}>
-            <View style={styles.iconWrapper}>
-              <Ionicons name="medical" size={20} color={Colors.primary} />
-            </View>
-            <Text style={styles.actionCardText}>Gestionar datos médicos</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textLight} />
-        </Pressable>
 
         {/* Botón de Cerrar Sesión */}
         <Pressable style={styles.logoutBtn} onPress={handleCerrarSesion}>
@@ -158,19 +127,6 @@ const styles = StyleSheet.create({
   campoValor: { fontSize: 15, color: Colors.text, fontWeight: '500' },
   campoPlaceholder: { color: Colors.textLight, fontWeight: 'normal' },
   campoAccion: { fontSize: 14, fontWeight: 'bold', color: Colors.primary, marginLeft: 16 },
-
-  actionCard: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    backgroundColor: Colors.surface, padding: 16, borderRadius: 12,
-    borderWidth: 1, borderColor: Colors.border, marginBottom: 12,
-  },
-  actionCardLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  iconWrapper: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: Colors.primary + '22',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  actionCardText: { fontSize: 15, fontWeight: '600', color: Colors.text },
 
   logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16, marginTop: 32, gap: 8 },
   logoutTexto: { color: Colors.danger, fontSize: 16, fontWeight: 'bold' }
