@@ -37,10 +37,7 @@ const handleCerrarSesion = () => {
             <Text style={styles.infoValue}>maria.g@hospital.com</Text>
           </View>
 
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Horario de guardia</Text>
-            <Text style={styles.infoValue}>Lunes a Viernes - 06:00 a 14:00</Text>
-          </View>
+          
         </View>
 
         <Pressable style={styles.logoutBtn} onPress={handleCerrarSesion}>

@@ -1,7 +1,6 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
-import { Colors } from '../../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '../../constants/colors';
 
 // 1. Creamos los datos hardcodeados de ejemplo
 const HISTORIAL_MOCK = [
@@ -59,7 +58,7 @@ export default function HistorialScreen() {
 
       <View style={styles.footer}>
         <Text style={styles.estadoTexto}>Estado: <Text style={{ fontWeight: 'bold' }}>{item.estado}</Text></Text>
-        <Ionicons name="chevron-forward" size={20} color={Colors.textLight} />
+        
       </View>
     </View>
   );

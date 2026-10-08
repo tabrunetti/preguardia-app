@@ -1,28 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 export default function AdminHome() {
   const router = useRouter();
   const [rolSeleccionado, setRolSeleccionado] = useState<'Secretaria' | 'Ambulancia'>('Secretaria');
+  const [nombre, setNombre] = useState('');
+  const [dni, setDni] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleCrearUsuario = () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Completá todos los campos.');
+    if (!nombre || !dni || !email || !password) {
+      Alert.alert('Error', 'Por favor completá todos los campos.');
       return;
     }
-    Alert.alert('¡Éxito!', `Se creó la cuenta de ${rolSeleccionado} para ${email}.`);
+    Alert.alert('¡Éxito!', `Se creó la cuenta de ${rolSeleccionado} para ${nombre} (DNI: ${dni}).`);
+    setNombre('');
+    setDni('');
     setEmail('');
     setPassword('');
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         
         <View style={styles.header}>
           <View>
@@ -57,6 +61,25 @@ export default function AdminHome() {
 
         {/* Formulario */}
         <View style={styles.form}>
+          <Text style={styles.label}>Nombre completo</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="ej: María González"
+            placeholderTextColor={Colors.textLight}
+            value={nombre}
+            onChangeText={setNombre}
+          />
+
+          <Text style={styles.label}>Número de documento (DNI)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="ej: 28.345.678"
+            placeholderTextColor={Colors.textLight}
+            keyboardType="numeric"
+            value={dni}
+            onChangeText={setDni}
+          />
+
           <Text style={styles.label}>Correo institucional</Text>
           <TextInput
             style={styles.input}
@@ -82,14 +105,14 @@ export default function AdminHome() {
           </Pressable>
         </View>
 
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  content: { paddingHorizontal: 24, paddingTop: 20 },
+  content: { paddingHorizontal: 24, paddingTop: 20, paddingBottom: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   saludo: { fontSize: 14, color: Colors.textLight },
   titulo: { fontSize: 26, fontWeight: 'bold', color: Colors.text },

@@ -1,16 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
+// Agregamos edad y presión al historial para enviarlos al detalle
 const HISTORIAL_ATENDIDOS = [
-  { id: '101', nombre: 'Martín Pérez', motivo: 'Cefalea intensa', nivel: 'Verde', hora: '14:30' },
-  { id: '102', nombre: 'Sofía Castro', motivo: 'Traumatismo de rodilla', nivel: 'Amarillo', hora: '13:15' },
-  { id: '103', nombre: 'Juan Ignacio Ruiz', motivo: 'Dolor abdominal agudo', nivel: 'Naranja', hora: '12:00' },
-  { id: '104', nombre: 'Lucas Medina', motivo: 'Corte superficial', nivel: 'Verde', hora: '11:45' },
+  { id: '101', nombre: 'Martín Pérez', motivo: 'Cefalea intensa', nivel: 'Verde', hora: '14:30', edad: 34, presion: '120/80' },
+  { id: '102', nombre: 'Sofía Castro', motivo: 'Traumatismo de rodilla', nivel: 'Amarillo', hora: '13:15', edad: 25, presion: '110/70' },
+  { id: '103', nombre: 'Juan Ignacio Ruiz', motivo: 'Dolor abdominal agudo', nivel: 'Naranja', hora: '12:00', edad: 42, presion: '135/85' },
+  { id: '104', nombre: 'Lucas Medina', motivo: 'Corte superficial', nivel: 'Verde', hora: '11:45', edad: 19, presion: '115/75' },
 ];
 
-export default function AdminHistorial() {
+export default function SecretariaHistorial() {
+  const router = useRouter();
   const [busqueda, setBusqueda] = useState('');
 
   // Filtramos solo por nombre de paciente
@@ -30,6 +33,18 @@ export default function AdminHistorial() {
         <View style={styles.badge}>
           <Text style={styles.badgeText}>Prioridad: {item.nivel}</Text>
         </View>
+
+        {/* Nuevo botón de Información */}
+        <Pressable 
+          style={styles.infoBtn} 
+          onPress={() => router.push({ 
+            pathname: '/(secretaria)/detallePaciente', 
+            params: { nombre: item.nombre, motivo: item.motivo, nivel: item.nivel, edad: item.edad, presion: item.presion } 
+          })}
+        >
+          <Ionicons name="information-circle-outline" size={20} color={Colors.primary} />
+          <Text style={styles.infoTexto}>Ver ficha</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -85,8 +100,11 @@ const styles = StyleSheet.create({
   hora: { fontSize: 13, color: Colors.textLight, fontWeight: '500' },
   pacienteMotivo: { fontSize: 14, color: Colors.text, marginBottom: 12 },
   
-  cardFooter: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 12 },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 12 },
   
   badge: { backgroundColor: '#FAFAFA', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: Colors.border },
-  badgeText: { fontSize: 11, fontWeight: 'bold', color: Colors.textLight }
+  badgeText: { fontSize: 11, fontWeight: 'bold', color: Colors.textLight },
+
+  infoBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: Colors.primary + '15', borderRadius: 8, borderWidth: 1, borderColor: Colors.primary + '40' },
+  infoTexto: { color: Colors.primary, fontSize: 13, fontWeight: '600' }
 });

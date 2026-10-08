@@ -130,7 +130,7 @@ export default function HomePaciente() {
         <Ionicons name="search" size={20} color={Colors.textLight} style={styles.searchIcon} />
         <TextInput
           style={styles.input}
-          placeholder="Buscar por nombre o cercanía"
+          placeholder="Buscar por nombre"
           placeholderTextColor={Colors.textLight}
           value={busqueda}
           onChangeText={setBusqueda}

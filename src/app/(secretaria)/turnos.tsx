@@ -1,16 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 const COLA_INICIAL = [
-  { id: '1', nombre: 'Carlos Rodríguez', motivo: 'Dolor de pecho irradiado', nivel: 'Rojo', color: Colors.danger },
-  { id: '2', nombre: 'Ana Silva', motivo: 'Corte profundo en brazo', nivel: 'Naranja', color: Colors.warning },
-  { id: '3', nombre: 'Roberto Gómez', motivo: 'Fiebre persistente 39°', nivel: 'Amarillo', color: '#EAB308' },
-  { id: '4', nombre: 'Lucía Fernández', motivo: 'Esguince de tobillo', nivel: 'Verde', color: Colors.success },
+  { id: '1', nombre: 'Carlos Rodríguez', motivo: 'Dolor de pecho irradiado', nivel: 'Rojo', color: Colors.danger, edad: 45, presion: '140/90' },
+  { id: '2', nombre: 'Ana Silva', motivo: 'Corte profundo en brazo', nivel: 'Naranja', color: Colors.warning, edad: 28, presion: '120/80' },
+  { id: '3', nombre: 'Roberto Gómez', motivo: 'Fiebre persistente 39°', nivel: 'Amarillo', color: '#EAB308', edad: 52, presion: '130/85' },
+  { id: '4', nombre: 'Lucía Fernández', motivo: 'Esguince de tobillo', nivel: 'Verde', color: Colors.success, edad: 19, presion: '110/70' },
 ];
 
 export default function AdminTurnosCola() {
+  const router = useRouter();
   const [pacientes, setPacientes] = useState(COLA_INICIAL);
 
   const handleAtender = (id: string, nombre: string) => {
@@ -48,9 +50,18 @@ export default function AdminTurnosCola() {
         </View>
       </View>
 
-      <Pressable style={styles.atenderBtn} onPress={() => handleAtender(item.id, item.nombre)}>
-        <Ionicons name="checkmark-circle-outline" size={26} color={Colors.success} />
-      </Pressable>
+      <View style={styles.actionsContainer}>
+         <Pressable 
+            style={styles.infoBtn} 
+            // Pasamos los datos del paciente a la nueva pantalla
+            onPress={() => router.push({ pathname: '/(secretaria)/detallePaciente', params: { nombre: item.nombre, motivo: item.motivo, nivel: item.nivel, edad: item.edad, presion: item.presion } })}
+         >
+          <Ionicons name="information-circle-outline" size={24} color={Colors.primary} />
+        </Pressable>
+        <Pressable style={styles.atenderBtn} onPress={() => handleAtender(item.id, item.nombre)}>
+          <Ionicons name="checkmark-circle-outline" size={24} color={Colors.success} />
+        </Pressable>
+      </View>
     </View>
   );
 
@@ -99,5 +110,7 @@ const styles = StyleSheet.create({
   badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
   dot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
   badgeText: { fontSize: 11, fontWeight: 'bold' },
-  atenderBtn: { padding: 10, backgroundColor: Colors.success + '15', borderRadius: 10, borderWidth: 1, borderColor: Colors.success + '40' }
+  actionsContainer: { flexDirection: 'column', gap: 8},
+  infoBtn: { padding: 8, backgroundColor: Colors.primary + '15', borderRadius: 10, borderWidth: 1, borderColor: Colors.primary + '40', alignItems: 'center' },
+  atenderBtn: { padding: 8, backgroundColor: Colors.success + '15', borderRadius: 10, borderWidth: 1, borderColor: Colors.success + '40', alignItems: 'center' }
 });

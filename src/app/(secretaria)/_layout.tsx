@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { Colors } from '../../constants/colors';
 
-export default function AdminTabsLayout() {
+export default function SecretariaTabsLayout() {
   return (
     <Tabs
       screenOptions={{
@@ -29,6 +29,16 @@ export default function AdminTabsLayout() {
           title: 'Ingreso',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-add-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      {/* NUEVA PESTAÑA: Solicitudes pendientes */}
+      <Tabs.Screen
+        name="solicitudes"
+        options={{
+          title: 'Solicitudes',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="notifications-outline" size={size} color={color} />
           ),
         }}
       />
@@ -59,6 +69,16 @@ export default function AdminTabsLayout() {
           ),
         }}
       />
+
+      {/* AGREGÁ ESTE BLOQUE PARA OCULTAR LA FICHA MÉDICA */}
+      <Tabs.Screen
+        name="detallePaciente"
+        options={{
+          href: null, // Esto es lo que la hace invisible en la barra
+        }}
+      />
     </Tabs>
+      
+    
   );
 }
