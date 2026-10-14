@@ -54,7 +54,7 @@ export default function AdminTurnosCola() {
          <Pressable 
             style={styles.infoBtn} 
          
-            onPress={() => router.push({ pathname: '/(secretaria)/detallePaciente', params: { nombre: item.nombre, motivo: item.motivo, nivel: item.nivel, edad: item.edad, presion: item.presion } })}
+            onPress={() => router.push({ pathname: '/(secretaria)/fichaEditable', params: { nombre: item.nombre, motivo: item.motivo, nivel: item.nivel, edad: item.edad, presion: item.presion } })}
          >
           <Ionicons name="information-circle-outline" size={24} color={Colors.primary} />
         </Pressable>
