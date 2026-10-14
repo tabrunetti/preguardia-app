@@ -41,6 +41,9 @@ const handleIngresar = () => {
   const handleCrearCuenta = () => {
     router.push("/crearPerfil");
   };
+  const handleOlvideContrasena = () => {
+    router.push("/olvideContrasena");
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,7 +81,9 @@ const handleIngresar = () => {
             onChangeText={setPassword}
           />
 
-          
+          <Pressable onPress={handleOlvideContrasena} style={styles.forgotButton}>
+            <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+          </Pressable>
 
           <Pressable style={styles.primaryButton} onPress={handleIngresar}>
             <Text style={styles.primaryButtonText}>Ingresar</Text>
@@ -90,7 +95,6 @@ const handleIngresar = () => {
         </View>
 
         <Text style={styles.legal}>
-          Al continuar, aceptás nuestros términos y políticas de salud pública.
         </Text>
       </View>
     </SafeAreaView>
@@ -187,5 +191,15 @@ const styles = StyleSheet.create({
     color: Colors.textLight,
     textAlign: "center",
     marginTop: 40,
+  },
+  forgotButton: {
+    alignSelf: "flex-end",
+    marginTop: 10,
+    paddingVertical: 4,
+  },
+  forgotText: {
+    color: Colors.primary,
+    fontSize: 13,
+    fontWeight: "600",
   },
 });

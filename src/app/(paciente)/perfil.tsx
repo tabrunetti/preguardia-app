@@ -3,15 +3,7 @@ import { useRouter } from 'expo-router';
 import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const USER_DATA = {
-  nombre: 'Tiago Abel',
-  apellido: 'Brunetti',
-  fechaNacimiento: '26/05/2001',
-  dni: '43.413.181',
-  email: 'tiagobrunetti@hotmail.com',
-  celular: null,
-  direccion: null,
-};
+import { eliminarFamiliar, Familiar, useFamiliares, USER_DATA } from '../../data/paciente';
 
 const CampoEditable = ({ label, valor, placeholder }: { label: string, valor: string | null, placeholder: string }) => {
   const tieneValor = valor !== null && valor !== '';
@@ -32,7 +24,18 @@ const CampoEditable = ({ label, valor, placeholder }: { label: string, valor: st
 
 export default function PerfilScreen() {
   const router = useRouter();
+    const familiares = useFamiliares();
 
+  const confirmarEliminar = (f: Familiar) => {
+    Alert.alert(
+      'Eliminar familiar',
+      `¿Querés quitar a ${f.nombre} ${f.apellido} de tu grupo familiar?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Eliminar', style: 'destructive', onPress: () => eliminarFamiliar(f.id) },
+      ]
+    );
+  };
   const handleCerrarSesion = () => {
     router.replace('/');
   };
@@ -79,7 +82,30 @@ export default function PerfilScreen() {
 
         <Text style={styles.seccionTitulo}>¿Cuál es tu dirección?</Text>
         <CampoEditable label="Dirección de residencia" valor={USER_DATA.direccion} placeholder="Ingresá tu dirección" />
+                <Text style={styles.seccionTitulo}>Grupo familiar</Text>
+        <Text style={styles.familiaSub}>
+          Personas a tu cargo que vas a poder pre-registrar en una emergencia.
+        </Text>
 
+        {familiares.map((f) => (
+          <View key={f.id} style={styles.familiarCard}>
+            <View style={styles.familiarAvatar}>
+              <Text style={styles.familiarInicial}>{f.nombre.charAt(0).toUpperCase()}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.familiarNombre}>{f.nombre} {f.apellido}</Text>
+              <Text style={styles.familiarDetalle}>{f.parentesco} · DNI {f.dni}</Text>
+            </View>
+            <Pressable onPress={() => confirmarEliminar(f)} hitSlop={10}>
+              <Ionicons name="trash-outline" size={20} color={Colors.textLight} />
+            </Pressable>
+          </View>
+        ))}
+
+        <Pressable style={styles.agregarFamiliarBtn} onPress={() => router.push('/familiarNuevo')}>
+          <Ionicons name="add-circle-outline" size={22} color={Colors.primary} />
+          <Text style={styles.agregarFamiliarTexto}>Agregar familiar</Text>
+        </Pressable>
         <Pressable style={styles.logoutBtn} onPress={handleCerrarSesion}>
           <Ionicons name="log-out-outline" size={20} color={Colors.danger} />
           <Text style={styles.logoutTexto}>Cerrar sesión</Text>
@@ -125,5 +151,24 @@ const styles = StyleSheet.create({
   campoAccion: { fontSize: 14, fontWeight: 'bold', color: Colors.primary, marginLeft: 16 },
 
   logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16, marginTop: 32, gap: 8 },
-  logoutTexto: { color: Colors.danger, fontSize: 16, fontWeight: 'bold' }
+  logoutTexto: { color: Colors.danger, fontSize: 16, fontWeight: 'bold' },
+    familiaSub: { fontSize: 13, color: Colors.textLight, marginBottom: 12, marginTop: -6 },
+  familiarCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: Colors.surface, marginBottom: 10,
+  },
+  familiarAvatar: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: Colors.primaryLight, justifyContent: 'center', alignItems: 'center',
+  },
+  familiarInicial: { fontSize: 16, fontWeight: 'bold', color: Colors.primary },
+  familiarNombre: { fontSize: 15, fontWeight: 'bold', color: Colors.text },
+  familiarDetalle: { fontSize: 12, color: Colors.textLight, marginTop: 2 },
+  agregarFamiliarBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    padding: 14, borderRadius: 12, borderWidth: 1.5, borderStyle: 'dashed',
+    borderColor: Colors.primary, marginTop: 4,
+  },
+  agregarFamiliarTexto: { color: Colors.primary, fontWeight: 'bold', fontSize: 15 },
 });

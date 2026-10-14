@@ -15,8 +15,8 @@ import {
 import EscanerDni from "../components/escanerDni";
 import { Colors } from "../constants/colors";
 import { HOSPITALES } from "../data/hospitals";
+import { DatosPersona, useFamiliares, USER_DATA } from "../data/paciente";
 import { DatosDni, formatearDni } from "../utils/dni";
-
 export default function PreRegistro() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -30,7 +30,34 @@ export default function PreRegistro() {
   const [contactoEmergencia, setContactoEmergencia] = useState("");
 
   const [escanerVisible, setEscanerVisible] = useState(false);
+    const familiares = useFamiliares();
+  const [seleccionado, setSeleccionado] = useState<string | null>(null);
+  const [faltantes, setFaltantes] = useState<string[] | null>(null);
 
+  const personas = [
+    { id: "yo", etiqueta: "Yo", datos: USER_DATA as DatosPersona },
+    ...familiares.map((f) => ({
+      id: f.id,
+      etiqueta: `${f.nombre} (${f.parentesco})`,
+      datos: f as DatosPersona,
+    })),
+  ];
+
+  const handleAutocompletar = (id: string, p: DatosPersona) => {
+    setSeleccionado(id);
+    setNombre(`${p.nombre} ${p.apellido}`);
+    setDni(p.dni);
+    setFechaNacimiento(p.fechaNacimiento);
+    // Se pisan todos los campos para no arrastrar datos de otra persona
+    setObraSocial(p.obraSocial ?? "");
+    setTelefono(p.celular ?? "");
+    setContactoEmergencia(p.contactoEmergencia ?? "");
+
+    const sinCargar: string[] = [];
+    if (!p.celular) sinCargar.push("Teléfono de contacto");
+    if (!p.contactoEmergencia) sinCargar.push("Contacto de emergencia");
+    setFaltantes(sinCargar);
+  };
   const handleDniEscaneado = (d: DatosDni) => {
     setNombre(`${d.nombres} ${d.apellido}`);
     setDni(formatearDni(d.dni));
@@ -63,7 +90,49 @@ export default function PreRegistro() {
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
+          <Text style={styles.paraQuienLabel}>¿Para quién es la consulta?</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chips}
+            style={{ marginBottom: 12 }}
+          >
+            {personas.map((p) => (
+              <Pressable
+                key={p.id}
+                style={[styles.chip, seleccionado === p.id && styles.chipActivo]}
+                onPress={() => handleAutocompletar(p.id, p.datos)}
+              >
+                <Ionicons
+                  name={p.id === "yo" ? "person" : "people"}
+                  size={14}
+                  color={seleccionado === p.id ? Colors.primary : Colors.textLight}
+                />
+                <Text style={[styles.chipTexto, seleccionado === p.id && styles.chipTextoActivo]}>
+                  {p.etiqueta}
+                </Text>
+              </Pressable>
+            ))}
+            <Pressable style={[styles.chip, styles.chipAgregar]} onPress={() => router.push("/familiarNuevo")}>
+              <Ionicons name="add" size={14} color={Colors.primary} />
+              <Text style={[styles.chipTexto, { color: Colors.primary }]}>Agregar</Text>
+            </Pressable>
+          </ScrollView>
 
+          {faltantes !== null && (
+            <View style={styles.aviso}>
+              <Ionicons
+                name={faltantes.length ? "information-circle-outline" : "checkmark-circle-outline"}
+                size={18}
+                color={faltantes.length ? Colors.warning : Colors.success}
+              />
+              <Text style={styles.avisoTexto}>
+                {faltantes.length
+                  ? `Datos cargados. Te falta completar: ${faltantes.join(", ")}.`
+                  : "Datos cargados desde tu perfil."}
+              </Text>
+            </View>
+          )}
           <Pressable
             style={styles.escanearBtn}
             onPress={() => setEscanerVisible(true)}
@@ -252,5 +321,58 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
+  },
+    aviso: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    backgroundColor: Colors.surface,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 8,
+  },
+  avisoTexto: {
+    flex: 1,
+    fontSize: 12,
+    color: Colors.text,
+    lineHeight: 17,
+  },
+    paraQuienLabel: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: Colors.text,
+    marginBottom: 10,
+  },
+  chips: {
+    gap: 8,
+    paddingRight: 8,
+  },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: "#FAFAFA",
+  },
+  chipActivo: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primaryLight,
+  },
+  chipAgregar: {
+    borderStyle: "dashed",
+    borderColor: Colors.primary,
+    backgroundColor: "transparent",
+  },
+  chipTexto: {
+    fontSize: 13,
+    color: Colors.text,
+  },
+  chipTextoActivo: {
+    color: Colors.primary,
+    fontWeight: "bold",
   },
 });
