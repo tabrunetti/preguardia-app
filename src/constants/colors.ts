@@ -14,4 +14,5 @@ export const Colors = {
   emergencia: "#DC2626", 
   emergenciaDark: "#991B1B", 
   emergenciaLight: "#FEF2F2", 
+  brandDark: "#1E293B",
 };

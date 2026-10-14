@@ -8,8 +8,8 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Logo from "../components/logo";
 import { Colors } from "../constants/colors";
-
 export default function SplashLogin() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -50,10 +50,7 @@ const handleIngresar = () => {
       <View style={styles.content}>
        
         <View style={styles.logoContainer}>
-          <View style={styles.logo}>
-            <Text style={styles.logoIcon}>🏥</Text>
-          </View>
-          <Text style={styles.title}>PreGuardia</Text>
+          <Logo variant="vertical" size={80} />
           <Text style={styles.subtitle}>
             Tu guardia, sin esperas innecesarias
           </Text>
