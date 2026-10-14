@@ -77,7 +77,14 @@ export default function SecretariaTabsLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="fichaEditable"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
+    
       
     
   );

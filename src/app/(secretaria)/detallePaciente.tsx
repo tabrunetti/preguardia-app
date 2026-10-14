@@ -17,7 +17,7 @@ export default function DetallePaciente() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Pressable onPress={() => router.navigate('/(secretaria)/historial')} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={Colors.text} />
         </Pressable>
         <Text style={styles.tituloPrincipal}>Ficha Médica</Text>
