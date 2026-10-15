@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 export default function AdminHome() {
@@ -25,22 +25,29 @@ export default function AdminHome() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        
-        <View style={styles.header}>
+    <View style={styles.container}>
+      {/* Cabecera azul fuera del ScrollView para que se pegue arriba */}
+      <View style={styles.header}>
+        <View style={styles.headerEtiquetaRow}>
+          <Ionicons name="person-add-outline" size={18} color="#FFFFFF" />
+          <Text style={styles.headerEtiquetaTexto}>CREAR USUARIO</Text>
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <View>
-            <Text style={styles.saludo}>Panel Gerencial</Text>
-            <Text style={styles.titulo}>Gestión de Personal</Text>
+            <Text style={styles.tituloPrincipal}>Gestión de Personal</Text>
+            <Text style={styles.subtitulo}>Panel Gerencial</Text>
           </View>
-          <Pressable onPress={() => router.replace('/')}>
-            <Ionicons name="log-out-outline" size={28} color={Colors.danger} />
+          <Pressable onPress={() => router.replace('/')} style={{ marginTop: 4 }}>
+            <Ionicons name="log-out-outline" size={28} color="#FFFFFF" />
           </Pressable>
         </View>
+      </View>
 
-        <Text style={styles.subtitulo}>Crear nueva cuenta de acceso</Text>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <Text style={styles.subtituloFormulario}>Crear nueva cuenta de acceso</Text>
 
         <View style={styles.rolesContainer}>
+          {/* ... botones de roles (sin cambios) ... */}
           <Pressable 
             style={[styles.rolBtn, rolSeleccionado === 'Secretaria' && styles.rolBtnActivo]}
             onPress={() => setRolSeleccionado('Secretaria')}
@@ -59,7 +66,8 @@ export default function AdminHome() {
         </View>
 
         <View style={styles.form}>
-          <Text style={styles.label}>Nombre completo</Text>
+           {/* ... el resto de tus inputs (sin cambios) ... */}
+           <Text style={styles.label}>Nombre completo</Text>
           <TextInput
             style={styles.input}
             placeholder="ej: María González"
@@ -102,20 +110,15 @@ export default function AdminHome() {
             <Text style={styles.primaryButtonText}>Crear Usuario</Text>
           </Pressable>
         </View>
-
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  content: { paddingHorizontal: 24, paddingTop: 20, paddingBottom: 40 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   saludo: { fontSize: 14, color: Colors.textLight },
   titulo: { fontSize: 26, fontWeight: 'bold', color: Colors.text },
-  subtitulo: { fontSize: 16, fontWeight: '600', color: Colors.text, marginBottom: 16 },
-  
   rolesContainer: { flexDirection: 'row', gap: 12, marginBottom: 24 },
   rolBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, backgroundColor: '#FAFAFA' },
   rolBtnActivo: { backgroundColor: Colors.primary, borderColor: Colors.primary },
@@ -128,4 +131,46 @@ const styles = StyleSheet.create({
   
   primaryButton: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 16, alignItems: 'center', marginTop: 16 },
   primaryButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  // Modifica content:
+  content: { paddingHorizontal: 24, paddingBottom: 40 },
+  
+  // Agrega/Reemplaza estos estilos de cabecera:
+  header: { 
+    backgroundColor: '#1F2937', 
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 24,
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipal: { 
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtitulo: { 
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
+  },
+  subtituloFormulario: { // Renombramos el viejo "subtitulo" para la seccion de abajo
+    fontSize: 16, 
+    fontWeight: '600', 
+    color: Colors.text, 
+    marginBottom: 16 
+  },
 });

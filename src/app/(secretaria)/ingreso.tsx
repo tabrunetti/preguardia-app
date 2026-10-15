@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 const NIVELES = [
@@ -28,7 +28,7 @@ export default function AdminNuevoIngreso() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         
         <View style={styles.header}>
@@ -96,17 +96,14 @@ export default function AdminNuevoIngreso() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  content: { paddingHorizontal: 24, paddingTop: 40, paddingBottom: 40 },
-  header: { marginBottom: 32 },
-  tituloPrincipal: { fontSize: 28, fontWeight: 'bold', color: Colors.text },
-  subtitulo: { fontSize: 15, color: Colors.textLight, marginTop: 4 },
-  card: { backgroundColor: Colors.surface, padding: 20, borderRadius: 16, borderWidth: 1, borderColor: Colors.border },
+  content: {paddingBottom: 40 },
+  card: { backgroundColor: Colors.surface, padding: 20, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 24 },
   label: { fontSize: 13, fontWeight: '600', color: Colors.text, marginBottom: 8, marginTop: 16 },
   inputContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FAFAFA', borderWidth: 1, borderColor: Colors.border, borderRadius: 12, paddingHorizontal: 14 },
   icon: { marginRight: 8 },
@@ -117,4 +114,37 @@ const styles = StyleSheet.create({
   nivelTexto: { fontSize: 13, fontWeight: '600', color: Colors.text },
   registrarBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 16, alignItems: 'center', marginTop: 32 },
   registrarTexto: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  // --- ESTILOS DE LA CABECERA A COLOR ---
+  header: { 
+    backgroundColor: '#4F46E5', // <-- Acá cambiás el color según el rol
+    paddingHorizontal: 24, 
+    paddingTop: 20, // Le damos más espacio arriba para que cubre la zona del reloj/batería
+    paddingBottom: 24,
+    borderBottomLeftRadius: 24, // Redondea la esquina inferior izquierda
+    borderBottomRightRadius: 24, // Redondea la esquina inferior derecha
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipal: { 
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' // Texto en blanco para contrastar
+  },
+  subtitulo: { 
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', // Blanco un poco transparente
+    marginTop: 4 
+  },
 });

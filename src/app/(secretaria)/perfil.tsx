@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '../../constants/colors';
 
 export default function AdminPerfil() {
@@ -12,8 +13,13 @@ const handleCerrarSesion = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <View style={styles.header}>
+        
         <Text style={styles.tituloPrincipal}>Perfil del Personal</Text>
+        <Text style={styles.subtitulo}>Gestión de cuenta y sesión</Text>
+      </View>
+      <ScrollView contentContainerStyle={styles.content}>
+       
         
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
@@ -52,7 +58,38 @@ const handleCerrarSesion = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   content: { paddingHorizontal: 24, paddingTop: 40, paddingBottom: 40 },
-  tituloPrincipal: { fontSize: 28, fontWeight: 'bold', color: Colors.text, marginBottom: 24 },
+  header: { 
+    backgroundColor: '#4F46E5', 
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 16, // Usa el valor que te haya gustado
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipal: { 
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtitulo: { 
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
+  },
   
   profileCard: { backgroundColor: Colors.surface, padding: 24, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: Colors.border, marginBottom: 32 },
   avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: Colors.primary + '20', justifyContent: 'center', alignItems: 'center', marginBottom: 16 },

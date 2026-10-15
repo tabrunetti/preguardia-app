@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import {
   FlatList,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../constants/colors";
 import { HOSPITALES, Hospital } from "../../../data/hospitals";
 
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.emergencia,
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 20,
     paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 import { eliminarFamiliar, Familiar, useFamiliares, USER_DATA } from '../../data/paciente';
@@ -41,10 +41,14 @@ export default function PerfilScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        
+        <Text style={styles.tituloPrincipalHeader}>Mi perfil</Text>
+        <Text style={styles.subtituloHeader}>Gestión de datos y familiares</Text>
+      </View>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         
-        <Text style={styles.tituloPrincipal}>Mi Perfil</Text>
 
         <View style={styles.datosEstaticosCard}>
           <View style={styles.datosHeader}>
@@ -112,7 +116,7 @@ export default function PerfilScreen() {
         </Pressable>
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -169,6 +173,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     padding: 14, borderRadius: 12, borderWidth: 1.5, borderStyle: 'dashed',
     borderColor: Colors.primary, marginTop: 4,
+  },
+  // Estilos de la cabecera (usando Colors.primary)
+  header: { 
+    backgroundColor: Colors.primary, // <-- Usamos el color principal
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 24,
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipalHeader: { // Renombrado para no pisar otros titulos
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtituloHeader: { // Renombrado para no pisar otros subtitulos
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
   },
   agregarFamiliarTexto: { color: Colors.primary, fontWeight: 'bold', fontSize: 15 },
 });

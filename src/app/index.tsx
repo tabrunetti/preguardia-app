@@ -1,14 +1,14 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Image,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import Logo from "../components/logo";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../constants/colors";
 export default function SplashLogin() {
   const router = useRouter();
@@ -50,7 +50,17 @@ const handleIngresar = () => {
       <View style={styles.content}>
        
         <View style={styles.logoContainer}>
-          <Logo variant="vertical" size={80} />
+          <Image 
+            source={require('../../assets/images/guardiaLogo.png')} 
+            style={{ width: 80, height: 80 }} 
+            resizeMode="contain" 
+          />
+
+          <Text style={styles.tituloApp}>
+            <Text style={{ color: '#1A202C' }}>Pre</Text>
+            <Text style={{ color: Colors.primary }}>Guardia</Text>
+          </Text>
+
           <Text style={styles.subtitle}>
             Tu guardia, sin esperas innecesarias
           </Text>
@@ -102,6 +112,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  tituloApp: {
+    fontSize: 34,
+    fontFamily: 'Outfit_700Bold', // Usá esta línea si ya tenés cargada la fuente Outfit, sino cambiala por fontWeight: "bold"
+    fontWeight: "bold",
+    marginTop: 12,
+    letterSpacing: -0.5,
   },
   content: {
     flex: 1,

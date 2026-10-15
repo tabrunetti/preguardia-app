@@ -2,12 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../constants/colors";
 
 const PROFESIONAL = {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.emergencia,
     alignItems: "center",
-    paddingTop: 50,
+    paddingTop: 20,
     paddingBottom: 28,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,

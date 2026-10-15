@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Alert, FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 const MOCK_USUARIOS = [
@@ -48,11 +48,18 @@ export default function BorrarUsuarios() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.titulo}>Gestionar Personal</Text>
-        <Text style={styles.subtitulo}>Lista de usuarios con acceso al sistema del hospital.</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerEtiquetaRow}>
+          <Ionicons name="trash-outline" size={18} color="#FFFFFF" />
+          <Text style={styles.headerEtiquetaTexto}>ELIMINAR USUARIO</Text>
+        </View>
+        <Text style={styles.tituloPrincipal}>Gestionar Personal</Text>
+        <Text style={styles.subtitulo}>Lista de usuarios con acceso al sistema.</Text>
+      </View>
 
+      {/* Se mantiene el FlatList envuelto en un View para sus márgenes */}
+      <View style={styles.content}>
         <FlatList
           data={usuarios}
           keyExtractor={item => item.id}
@@ -64,16 +71,13 @@ export default function BorrarUsuarios() {
           }
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  content: { paddingHorizontal: 24, paddingTop: 30, flex: 1 },
   titulo: { fontSize: 26, fontWeight: 'bold', color: Colors.text },
-  subtitulo: { fontSize: 15, color: Colors.textLight, marginTop: 6, marginBottom: 24 },
-  
   card: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -103,5 +107,41 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF2F2', 
     borderRadius: 8 
   },
-  vacio: { textAlign: 'center', color: Colors.textLight, marginTop: 40 }
+  vacio: { textAlign: 'center', color: Colors.textLight, marginTop: 40 },
+  // Modifica content (solo dejamos el margen horizontal y flex):
+  content: { paddingHorizontal: 24, flex: 1 },
+
+  // Agrega/Reemplaza los estilos de cabecera:
+  header: { 
+    backgroundColor: '#1F2937', 
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 24,
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipal: { 
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtitulo: { 
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
+  },
 });

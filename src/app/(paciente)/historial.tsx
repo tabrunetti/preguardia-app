@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 const HISTORIAL_MOCK = [
@@ -62,11 +62,14 @@ export default function HistorialScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.titulo}>Mi Historial</Text>
-        <Text style={styles.subtitulo}>Tus últimas consultas y pre-registros</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        
+        <Text style={styles.tituloPrincipalHeader}>Mi Historial</Text>
+        <Text style={styles.subtituloHeader}>Tus últimas consultas y pre-registros</Text>
+      </View>
 
+      <View style={styles.content}>
         <FlatList
           data={HISTORIAL_MOCK}
           keyExtractor={(item) => item.id}
@@ -75,7 +78,7 @@ export default function HistorialScreen() {
           showsVerticalScrollIndicator={false}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -87,7 +90,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 20,
   },
   titulo: { 
     fontSize: 28, 
@@ -174,5 +176,38 @@ const styles = StyleSheet.create({
   estadoTexto: {
     fontSize: 13,
     color: Colors.textLight,
-  }
+  },
+  // Estilos de la cabecera (usando Colors.primary)
+  header: { 
+    backgroundColor: Colors.primary, // <-- Usamos el color principal
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 24,
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipalHeader: { // Renombrado para no pisar otros titulos
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtituloHeader: { // Renombrado para no pisar otros subtitulos
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
+  },
 });

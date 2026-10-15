@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 export default function MiTurnoScreen() {
@@ -10,17 +10,19 @@ export default function MiTurnoScreen() {
   const [tieneTurno, setTieneTurno] = useState(true);
 
   return (
-    <SafeAreaView style={styles.container}>
-      
+    <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.tituloPrincipal}>Mi Turno</Text>
-        <Pressable 
-          style={styles.demoToggle} 
-          onPress={() => setTieneTurno(!tieneTurno)}
-        >
-          <Ionicons name="swap-horizontal" size={16} color={Colors.primary} />
-          <Text style={styles.demoToggleText}>Simular</Text>
-        </Pressable>
+        
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={styles.tituloPrincipalHeader}>Mi Turno</Text>
+          <Pressable 
+            style={styles.demoToggle} 
+            onPress={() => setTieneTurno(!tieneTurno)}
+          >
+            <Ionicons name="swap-horizontal" size={16} color={Colors.primary} />
+            <Text style={styles.demoToggleText}>Simular</Text>
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -92,16 +94,13 @@ export default function MiTurnoScreen() {
         )}
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  header: { 
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 24, paddingTop: 20, marginBottom: 12
-  },
+
   tituloPrincipal: { fontSize: 28, fontWeight: 'bold', color: Colors.text },
   demoToggle: { 
     flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.primaryLight,
@@ -160,4 +159,37 @@ const styles = StyleSheet.create({
   llegueTexto: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   cancelarBtn: { paddingVertical: 12, alignItems: 'center' },
   cancelarTexto: { color: Colors.danger, fontSize: 14, fontWeight: '600' },
+  // Estilos de la cabecera (usando Colors.primary)
+  header: { 
+    backgroundColor: Colors.primary, // <-- Usamos el color principal
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 24,
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipalHeader: { // Renombrado para no pisar otros titulos
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtituloHeader: { // Renombrado para no pisar otros subtitulos
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
+  },
 });

@@ -119,42 +119,47 @@ export default function HomePaciente() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.saludo}>Hola, bienvenido/a</Text>
-      <Text style={styles.titulo}>Buscar Hospital</Text>
-
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={Colors.textLight} style={styles.searchIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Buscar por nombre"
-          placeholderTextColor={Colors.textLight}
-          value={busqueda}
-          onChangeText={setBusqueda}
-        />
+      <View style={styles.header}>
+        
+        <Text style={styles.tituloPrincipalHeader}>Buscar Hospital</Text>
+        <Text style={styles.subtituloHeader}>Hola, bienvenido/a</Text>
       </View>
 
-      <Text style={styles.seccion}>Guardias más cercanas a vos</Text>
-
-      {cargandoUbicacion ? (
-        <View style={styles.loaderContainer}>
-           <ActivityIndicator size="large" color={Colors.primary} />
-           <Text style={styles.loaderText}>Calculando distancias...</Text>
+      <View style={{ paddingHorizontal: 24, flex: 1 }}>
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color={Colors.textLight} style={styles.searchIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Buscar por nombre"
+            placeholderTextColor={Colors.textLight}
+            value={busqueda}
+            onChangeText={setBusqueda}
+          />
         </View>
-      ) : (
-        <FlatList
-          data={hospitalesFiltrados}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+
+        <Text style={styles.seccion}>Guardias más cercanas a vos</Text>
+
+        {cargandoUbicacion ? (
+          <View style={styles.loaderContainer}>
+             <ActivityIndicator size="large" color={Colors.primary} />
+             <Text style={styles.loaderText}>Calculando distancias...</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={hospitalesFiltrados}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background, paddingTop: 60, paddingHorizontal: 20 },
+  container: { flex: 1, backgroundColor: Colors.background},
   saludo: { fontSize: 14, color: Colors.textLight },
   titulo: { fontSize: 26, fontWeight: 'bold', color: Colors.text, marginBottom: 16 },
   searchContainer: {
@@ -205,4 +210,37 @@ cardContent: {
   cardDireccion: { fontSize: 13, color: Colors.textLight, marginTop: 6, marginBottom: 12 },
   cardFooter: { flexDirection: 'row', gap: 16, borderTopWidth: 1, borderTopColor: Colors.surface, paddingTop: 12 },
   cardInfo: { fontSize: 13, color: Colors.textLight, fontWeight: '500' },
+  // Estilos de la cabecera (usando Colors.primary)
+  header: { 
+    backgroundColor: Colors.primary, // <-- Usamos el color principal
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 24,
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipalHeader: { // Renombrado para no pisar otros titulos
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtituloHeader: { // Renombrado para no pisar otros subtitulos
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
+  },
 });

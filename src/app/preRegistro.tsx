@@ -5,13 +5,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import EscanerDni from "../components/escanerDni";
 import { Colors } from "../constants/colors";
 import { HOSPITALES } from "../data/hospitals";

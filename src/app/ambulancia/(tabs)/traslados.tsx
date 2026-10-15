@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../constants/colors";
 
 type Traslado = {
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.emergencia,
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 20,
     paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,

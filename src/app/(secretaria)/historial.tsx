@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '../../constants/colors';
 
 
@@ -50,10 +51,11 @@ export default function SecretariaHistorial() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        
         <Text style={styles.tituloPrincipal}>Historial Guardia</Text>
         <Text style={styles.subtitulo}>Pacientes atendidos en el día</Text>
 
-        <View style={styles.searchContainer}>
+        <View style={[styles.searchContainer, { marginTop: 16 }]}>
           <Ionicons name="search" size={20} color={Colors.textLight} style={styles.searchIcon} />
           <TextInput
             style={styles.input}
@@ -81,9 +83,38 @@ export default function SecretariaHistorial() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  header: { paddingHorizontal: 24, paddingTop: 40, paddingBottom: 16 },
-  tituloPrincipal: { fontSize: 28, fontWeight: 'bold', color: Colors.text },
-  subtitulo: { fontSize: 15, color: Colors.textLight, marginTop: 4, marginBottom: 20 },
+  header: { 
+    backgroundColor: '#4F46E5', 
+    paddingHorizontal: 24, 
+    paddingTop: 20, 
+    paddingBottom: 16, // Usa el valor que te haya gustado
+    borderBottomLeftRadius: 24, 
+    borderBottomRightRadius: 24, 
+    marginBottom: 20 
+  },
+  headerEtiquetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16
+  },
+  headerEtiquetaTexto: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase'
+  },
+  tituloPrincipal: { 
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#FFFFFF' 
+  },
+  subtitulo: { 
+    fontSize: 15, 
+    color: 'rgba(255,255,255,0.8)', 
+    marginTop: 4 
+  },
   
   searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FAFAFA', borderWidth: 1, borderColor: Colors.border, borderRadius: 12, paddingHorizontal: 14 },
   searchIcon: { marginRight: 8 },
