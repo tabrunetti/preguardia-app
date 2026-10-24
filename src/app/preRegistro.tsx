@@ -95,7 +95,7 @@ export default function PreRegistro() {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.chips}
-            style={{ marginBottom: 12 }}
+            style={{ marginBottom: 12, maxHeight: 45 }}
           >
             {personas.map((p) => (
               <Pressable
@@ -113,10 +113,6 @@ export default function PreRegistro() {
                 </Text>
               </Pressable>
             ))}
-            <Pressable style={[styles.chip, styles.chipAgregar]} onPress={() => router.push("/familiarNuevo")}>
-              <Ionicons name="add" size={14} color={Colors.primary} />
-              <Text style={[styles.chipTexto, { color: Colors.primary }]}>Agregar</Text>
-            </Pressable>
           </ScrollView>
 
           {faltantes !== null && (
@@ -346,13 +342,15 @@ const styles = StyleSheet.create({
   chips: {
     gap: 8,
     paddingRight: 8,
+    
+    alignItems: "center",
   },
   chip: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 14,
-    paddingVertical: 9,
+    paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: Colors.border,
