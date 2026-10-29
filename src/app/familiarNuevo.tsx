@@ -29,9 +29,9 @@ export default function FamiliarNuevo() {
   const [nombre, setNombre] = useState('');
   const [dni, setDni] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [obraSocial, setObraSocial] = useState('');
+  
   const [celular, setCelular] = useState('');
-  const [contactoEmergencia, setContactoEmergencia] = useState('');
+  
 
   const [escanerVisible, setEscanerVisible] = useState(false);
   const [error, setError] = useState('');
@@ -77,9 +77,9 @@ export default function FamiliarNuevo() {
           nombre: nombre.trim(),
           dni: dni.trim(),
           fechaNacimiento: fechaNacimiento.trim(),
-          obraSocial: obraSocial.trim() || null,
+         
           celular: celular.trim() || null,
-          contactoEmergencia: contactoEmergencia.trim() || null,
+          
         }),
       });
 
@@ -150,17 +150,12 @@ export default function FamiliarNuevo() {
           <TextInput style={styles.input} placeholder="DD/MM/AAAA" placeholderTextColor={Colors.textLight}
             value={fechaNacimiento} onChangeText={setFechaNacimiento} />
 
-          <Text style={styles.label}>Obra social / Prepaga (Opcional)</Text>
-          <TextInput style={styles.input} placeholder="PAMI, OSDE, IOMA, etc." placeholderTextColor={Colors.textLight}
-            value={obraSocial} onChangeText={setObraSocial} />
-
+          
           <Text style={styles.label}>Teléfono (Opcional)</Text>
           <TextInput style={styles.input} placeholder="+54 9 11 5555 5555" placeholderTextColor={Colors.textLight}
             keyboardType="phone-pad" value={celular} onChangeText={setCelular} />
 
-          <Text style={styles.label}>Contacto de emergencia (Opcional)</Text>
-          <TextInput style={styles.input} placeholder="Vos u otra persona - 11 9999 9999" placeholderTextColor={Colors.textLight}
-            value={contactoEmergencia} onChangeText={setContactoEmergencia} />
+          
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 

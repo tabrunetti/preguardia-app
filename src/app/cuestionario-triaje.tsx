@@ -101,6 +101,7 @@ export default function CuestionarioTriaje() {
           creadorId: creadorId, // <--- AGREGAMOS EL CREADOR ID ACÁ
           pacienteNombre: params.pacienteNombre,
           pacienteDni: params.pacienteDni,
+          pacienteTelefono: params.pacienteTelefono,
           pacienteEdad: edad ? parseInt(edad, 10) : Number(params.pacienteEdad) || 0,
           motivo: motivo,
           nivel: resultado.nivel,

@@ -35,9 +35,9 @@ type Familiar = {
   nombre: string;
   dni: string;
   fechaNacimiento: string;
-  obraSocial: string | null;
+  
   celular: string | null;
-  contactoEmergencia: string | null;
+  
 };
 
 // Datos comunes que usa el autocompletado
@@ -45,7 +45,7 @@ type DatosPersona = {
   nombre: string;
   dni: string | null;
   fechaNacimiento: string | null;
-  obraSocial: string | null;
+  
   celular: string | null;
   
 };
@@ -67,7 +67,7 @@ export default function PreRegistro() {
   const [nombre, setNombre] = useState("");
   const [dni, setDni] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [obraSocial, setObraSocial] = useState("");
+  
   const [telefono, setTelefono] = useState("");
  
 
@@ -101,7 +101,7 @@ export default function PreRegistro() {
             nombre: usuario.nombre,
             dni: usuario.dni,
             fechaNacimiento: usuario.fechaNacimiento,
-            obraSocial: null,
+            
             celular: usuario.celular,
           },
         },
@@ -113,7 +113,7 @@ export default function PreRegistro() {
             nombre: f.nombre,
             dni: f.dni,
             fechaNacimiento: f.fechaNacimiento,
-            obraSocial: f.obraSocial,
+            
             celular: f.celular,
            
           },
@@ -139,7 +139,7 @@ export default function PreRegistro() {
     setNombre(d.nombre ?? "");
     setDni(formatearDniVisual(d.dni));
     setFechaNacimiento(d.fechaNacimiento ?? "");
-    setObraSocial(d.obraSocial ?? "");
+    
     setTelefono(d.celular ?? "");
     
 
@@ -202,6 +202,7 @@ export default function PreRegistro() {
       pacienteDni: dni.replace(/\D/g, ""),
       pacienteEdad: edadCalculada.toString(),
       pacienteSexo: "No especificado",
+      pacienteTelefono: telefono.trim(),
     }).toString();
 
     router.push(`/banderasRojas?${params}`);
@@ -318,14 +319,7 @@ export default function PreRegistro() {
               onChangeText={setFechaNacimiento}
             />
 
-            <Text style={styles.label}>Obra social / Prepaga (Opcional)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="PAMI, OSDE, IOMA, etc."
-              placeholderTextColor={Colors.textLight}
-              value={obraSocial}
-              onChangeText={setObraSocial}
-            />
+            
 
             <Text style={styles.label}>Teléfono de contacto *</Text>
             <TextInput

@@ -26,6 +26,9 @@ type Turno = {
   estado: string;
   tiempoEstimado: number | null;
   fechaCreacion: string;
+  personasAdelante: number;
+  posicion: number;
+  esperaEstimadaMin: number;
   hospital: { id: string; nombre: string; direccion: string };
 };
 
@@ -63,10 +66,12 @@ export default function MiTurnoScreen() {
     }
   }, []);
 
-  // Recarga cada vez que se entra a la pestaña
+    // Recarga al entrar a la pestaña y cada 20 s mientras esté abierta
   useFocusEffect(
     useCallback(() => {
       cargarTurno();
+      const intervalo = setInterval(cargarTurno, 20000);
+      return () => clearInterval(intervalo);
     }, [cargarTurno])
   );
 
@@ -85,7 +90,7 @@ export default function MiTurnoScreen() {
         setTurno(null);
         avisar('Turno cancelado', 'Tu pre-registro fue cancelado. Lo vas a ver en tu historial.');
       } else {
-        setTurno(actualizado);
+        await cargarTurno();
       }
     } catch {
       avisar('Error', 'No se pudo actualizar el turno.');
@@ -108,7 +113,11 @@ export default function MiTurnoScreen() {
 
   const colorNivel = turno?.color ?? Colors.warning;
   const yaLlego = turno?.estado === 'Activo';
-
+  const adelante = turno?.personasAdelante ?? 0;
+  const textoAdelante =
+    adelante === 0
+      ? yaLlego ? '¡Sos el próximo!' : 'No hay nadie delante tuyo ahora'
+      : `${adelante} ${adelante === 1 ? 'persona' : 'personas'} delante tuyo${yaLlego ? '' : ' si llegás ahora'}`;
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -177,6 +186,24 @@ export default function MiTurnoScreen() {
               </View>
 
               <View style={styles.ticketBody}>
+                                <View style={styles.posicionRow}>
+                  <View style={styles.posicionCirculo}>
+                    <Text style={styles.posicionLabel}>{yaLlego ? 'POSICIÓN' : 'ESTIMADA'}</Text>
+                    <Text style={styles.posicionNumero}>#{turno.posicion}</Text>
+                  </View>
+                  <View style={{ flex: 1, marginLeft: 16 }}>
+                    <Text style={styles.adelanteTexto}>{textoAdelante}</Text>
+                    <View style={styles.esperaRow}>
+                      <Ionicons name="time-outline" size={16} color={Colors.textLight} />
+                      <Text style={styles.esperaTexto}>
+                        {adelante === 0
+                          ? yaLlego ? 'Te llaman en breve' : 'Sin espera por ahora'
+                          : `Espera aprox. ~${turno.esperaEstimadaMin} min`}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
                 <View style={styles.avisoBox}>
                   <Ionicons
                     name={yaLlego ? 'checkmark-circle-outline' : 'time-outline'}
@@ -185,8 +212,8 @@ export default function MiTurnoScreen() {
                   />
                   <Text style={styles.avisoText}>
                     {yaLlego
-                      ? 'Ya avisaste que llegaste. Esperá a ser llamado en la sala.'
-                      : 'Al momento de confirmar que llegaste al hospital, se te asignará una posición en la sala.'}
+                      ? 'Ya avisaste que llegaste. La fila se ordena por prioridad de gravedad: si llega alguien más urgente, tu posición puede cambiar.'
+                      : 'Tu lugar en la fila se confirma cuando avisás que llegaste al hospital.'}
                   </Text>
                 </View>
 
@@ -293,4 +320,14 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 24, borderBottomRightRadius: 24, marginBottom: 20,
   },
   tituloPrincipalHeader: { fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' },
+    posicionRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+  posicionCirculo: {
+    width: 90, height: 90, borderRadius: 45, borderWidth: 4, borderColor: Colors.primary,
+    justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff',
+  },
+  posicionLabel: { fontSize: 10, fontWeight: '600', color: Colors.textLight },
+  posicionNumero: { fontSize: 28, fontWeight: 'bold', color: Colors.text },
+  adelanteTexto: { fontSize: 16, fontWeight: 'bold', color: Colors.text, marginBottom: 6 },
+  esperaRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  esperaTexto: { fontSize: 13, color: Colors.textLight },
 });

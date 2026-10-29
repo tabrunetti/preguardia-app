@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { API_URL } from '../../constants/api';
 import { Colors } from '../../constants/colors';
@@ -28,6 +28,7 @@ type Turno = {
   id: number;
   pacienteNombre: string;
   pacienteDni: string;
+  pacienteTelefono: string | null;
   pacienteEdad: number | null;
   pacientePresion: string | null;
   motivo: string;
@@ -108,6 +109,18 @@ export default function DetallePaciente() {
           <View style={styles.infoCard}>
             <Fila label="Paciente" valor={turno.pacienteNombre} />
             <Fila label="DNI" valor={turno.pacienteDni} />
+            <Text style={styles.label}>Teléfono de contacto</Text>
+            {turno.pacienteTelefono ? (
+              <Pressable
+                style={styles.telefonoRow}
+                onPress={() => Linking.openURL(`tel:${turno.pacienteTelefono!.replace(/[^\d+]/g, '')}`)}
+              >
+                <Ionicons name="call-outline" size={18} color={Colors.primary} />
+                <Text style={[styles.valor, { color: Colors.primary }]}>{turno.pacienteTelefono}</Text>
+              </Pressable>
+            ) : (
+              <Text style={styles.valor}>Sin registrar</Text>
+            )}
             <Fila label="Motivo de consulta" valor={turno.motivo} />
 
             <Text style={styles.label}>Prioridad asignada</Text>
@@ -177,4 +190,5 @@ const styles = StyleSheet.create({
   banderaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
   banderaTexto: { fontSize: 15, color: Colors.danger, fontWeight: '600' },
   error: { textAlign: 'center', color: Colors.textLight, marginTop: 40, fontSize: 15 },
+    telefonoRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
 });

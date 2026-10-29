@@ -54,9 +54,10 @@ export default function BanderasRojasScreen() {
             creadorId: creadorId, // <--- AGREGAMOS EL CREADOR ID ACÁ
             pacienteNombre: params.pacienteNombre,
             pacienteDni: params.pacienteDni,
+            pacienteTelefono: params.pacienteTelefono,
             pacienteEdad: Number(params.pacienteEdad) || 0,
             motivo: bandera.motivo, 
-            nivel: 'Resucitación', 
+            nivel: 'Emergencia', 
             color: '#EF4444',
             triaje: respuestas 
           })
