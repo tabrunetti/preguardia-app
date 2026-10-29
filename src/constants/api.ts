@@ -1,0 +1,1 @@
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://172.28.96.1:3000/api';

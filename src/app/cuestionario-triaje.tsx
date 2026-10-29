@@ -24,7 +24,7 @@ import {
 } from '../utils/triage';
 
 // Reemplazá con tu IP local
-const API_URL = 'http://192.168.1.23:3000/api'; 
+const API_URL = 'http://172.28.96.1:3000/api'; 
 
 const MOTIVOS: Motivo[] = [
   'Dolor', 'Fiebre', 'Dificultad respiratoria', 

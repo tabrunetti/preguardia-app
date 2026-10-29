@@ -16,7 +16,7 @@ import {
 import { Colors } from '../../constants/colors';
 import { Hospital } from '../../data/hospitals';
 
-const API_URL = 'http://192.168.1.23:3000/api';
+const API_URL = 'http://172.28.96.1:3000/api';
 
 function calcularDistancia(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; 

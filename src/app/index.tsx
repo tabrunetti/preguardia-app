@@ -17,7 +17,7 @@ export default function SplashLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-const API_URL = 'http://192.168.1.23:3000/api';
+const API_URL = 'http://172.28.96.1:3000/api';
 
 const handleIngresar = async () => {
   if (!email || !password) {
@@ -29,31 +29,39 @@ const handleIngresar = async () => {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     });
 
+    const data = await response.json().catch(() => null);
+
     if (!response.ok) {
-      Alert.alert('Error', 'Correo o contraseña incorrectos');
+      Alert.alert('Error', data?.error ?? 'Correo o contraseña incorrectos');
       return;
     }
 
-    const usuario = await response.json();
-    await AsyncStorage.setItem('usuarioId', usuario.id.toString());
+    const usuario = data;
 
-    // Redirección basada en el rol que devuelve la base de datos
+    // Guardamos la sesión (borrando datos de una sesión anterior)
+    await AsyncStorage.multiRemove(['usuarioId', 'rol', 'hospitalId']);
+    await AsyncStorage.setItem('usuarioId', usuario.id.toString());
+    await AsyncStorage.setItem('rol', usuario.rol);
+    if (usuario.hospitalId) {
+      await AsyncStorage.setItem('hospitalId', usuario.hospitalId);
+    }
+
     switch (usuario.rol) {
       case 'Admin':
-        router.replace("/(admin)/home");
+        router.replace('/admin/home');
         break;
       case 'Secretaria':
-        router.replace("/(secretaria)/ingreso");
+        router.replace('/secretaria/ingreso');
         break;
       case 'Ambulancia':
       case 'Profesional':
-        router.replace("/ambulancia/home");
+        router.replace('/ambulancia/home');
         break;
-      default: // Paciente
-        router.replace("/(paciente)/home");
+      default:
+        router.replace('/(paciente)/home');
     }
   } catch (error) {
     console.error(error);

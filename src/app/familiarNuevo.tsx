@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -11,11 +13,12 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import EscanerDni from '../components/escanerDni';
 import { Colors } from '../constants/colors';
-import { agregarFamiliar } from '../data/paciente';
 import { DatosDni, formatearDni } from '../utils/dni';
+
+const API_URL = 'http://172.28.96.1:3000/api';
 
 const PARENTESCOS = ['Hijo/a', 'Madre', 'Padre', 'Pareja', 'Hermano/a', 'Abuelo/a', 'Otro'];
 
@@ -24,7 +27,6 @@ export default function FamiliarNuevo() {
 
   const [parentesco, setParentesco] = useState('');
   const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
   const [dni, setDni] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [obraSocial, setObraSocial] = useState('');
@@ -33,43 +35,78 @@ export default function FamiliarNuevo() {
 
   const [escanerVisible, setEscanerVisible] = useState(false);
   const [error, setError] = useState('');
+  const [guardando, setGuardando] = useState(false);
+
+  const volver = () => (router.canGoBack() ? router.back() : router.replace('/(paciente)/perfil'));
 
   const handleDniEscaneado = (d: DatosDni) => {
-    setNombre(d.nombres);
-    setApellido(d.apellido);
+    setNombre(`${d.nombres} ${d.apellido}`.trim());
     setDni(formatearDni(d.dni));
     setFechaNacimiento(d.fechaNacimiento);
   };
 
-  const handleGuardar = () => {
-    if (!parentesco || !nombre.trim() || !apellido.trim() || !dni.trim() || !fechaNacimiento.trim()) {
+  const handleGuardar = async () => {
+    setError('');
+
+    if (!parentesco || !nombre.trim() || !dni.trim() || !fechaNacimiento.trim()) {
       setError('Completá el parentesco y todos los campos obligatorios (*).');
       return;
     }
+    if (!/^\d{7,8}$/.test(dni.replace(/\D/g, ''))) {
+      setError('El DNI debe tener 7 u 8 números.');
+      return;
+    }
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fechaNacimiento.trim())) {
+      setError('La fecha de nacimiento debe tener el formato DD/MM/AAAA.');
+      return;
+    }
 
-    agregarFamiliar({
-      parentesco,
-      nombre: nombre.trim(),
-      apellido: apellido.trim(),
-      dni: dni.trim(),
-      fechaNacimiento: fechaNacimiento.trim(),
-      obraSocial: obraSocial.trim() || null,
-      celular: celular.trim() || null,
-      contactoEmergencia: contactoEmergencia.trim() || null,
-    });
+    const usuarioId = await AsyncStorage.getItem('usuarioId');
+    if (!usuarioId) {
+      setError('No se encontró la sesión. Volvé a iniciar sesión.');
+      return;
+    }
 
-    router.back();
+    setGuardando(true);
+    try {
+      const res = await fetch(`${API_URL}/usuarios/${usuarioId}/familiares`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          parentesco,
+          nombre: nombre.trim(),
+          dni: dni.trim(),
+          fechaNacimiento: fechaNacimiento.trim(),
+          obraSocial: obraSocial.trim() || null,
+          celular: celular.trim() || null,
+          contactoEmergencia: contactoEmergencia.trim() || null,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.error ?? 'No se pudo guardar el familiar.');
+        return;
+      }
+
+      volver();
+    } catch {
+      setError('No se pudo conectar con el servidor.');
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.header}>
-            <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(paciente)/perfil'))}
-              style={styles.backButton}
-            >
+            <Pressable onPress={volver} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color={Colors.text} />
             </Pressable>
           </View>
@@ -101,13 +138,9 @@ export default function FamiliarNuevo() {
             ))}
           </View>
 
-          <Text style={styles.label}>Nombre *</Text>
-          <TextInput style={styles.input} placeholder="Laura" placeholderTextColor={Colors.textLight}
-            value={nombre} onChangeText={setNombre} />
-
-          <Text style={styles.label}>Apellido *</Text>
-          <TextInput style={styles.input} placeholder="Gómez" placeholderTextColor={Colors.textLight}
-            value={apellido} onChangeText={setApellido} />
+          <Text style={styles.label}>Nombre completo *</Text>
+          <TextInput style={styles.input} placeholder="Laura Gómez" placeholderTextColor={Colors.textLight}
+            value={nombre} onChangeText={setNombre} autoCapitalize="words" />
 
           <Text style={styles.label}>DNI / Documento *</Text>
           <TextInput style={styles.input} placeholder="12.345.678" placeholderTextColor={Colors.textLight}
@@ -131,8 +164,16 @@ export default function FamiliarNuevo() {
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          <Pressable style={styles.primaryButton} onPress={handleGuardar}>
-            <Text style={styles.primaryButtonText}>Guardar familiar</Text>
+          <Pressable
+            style={[styles.primaryButton, guardando && { opacity: 0.7 }]}
+            onPress={handleGuardar}
+            disabled={guardando}
+          >
+            {guardando ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.primaryButtonText}>Guardar familiar</Text>
+            )}
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>

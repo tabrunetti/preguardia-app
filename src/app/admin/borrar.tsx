@@ -1,30 +1,37 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Alert, FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const API_URL = 'http://192.168.1.23:3000/api'; 
-const HOSPITAL_ID = '5413cb68-5ddb-4840-bd09-927af05fd8e8';
+const API_URL = 'http://172.28.96.1:3000/api';
 
 export default function BorrarUsuarios() {
-  // Inicializamos el estado vacío en lugar de usar MOCK_USUARIOS
   const [usuarios, setUsuarios] = useState<any[]>([]);
 
-  // Función para traer los datos del backend
-  const cargarUsuarios = async () => {
+  // Trae el personal del hospital del admin logueado
+  const cargarUsuarios = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/hospitales/${HOSPITAL_ID}/personal`);
-      const data = await response.json();
-      setUsuarios(data);
+      const hospitalId = await AsyncStorage.getItem('hospitalId');
+      if (!hospitalId) {
+        setUsuarios([]);
+        return;
+      }
+      const response = await fetch(`${API_URL}/hospitales/${hospitalId}/personal`);
+      if (!response.ok) throw new Error();
+      setUsuarios(await response.json());
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
     }
-  };
-
-  // Se ejecuta una vez cuando entras a la pantalla
-  useEffect(() => {
-    cargarUsuarios();
   }, []);
+
+  // Se recarga cada vez que entrás a la pestaña (así aparecen los recién creados)
+  useFocusEffect(
+    useCallback(() => {
+      cargarUsuarios();
+    }, [cargarUsuarios])
+  );
 
   // Ojo: id ahora es un number (porque así lo definiste en Prisma)
   const handleBorrar = async (id: number, email: string) => { 
@@ -107,7 +114,7 @@ export default function BorrarUsuarios() {
       <View style={styles.content}>
         <FlatList
           data={usuarios}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}

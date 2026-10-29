@@ -8,7 +8,7 @@ import { Colors } from '../constants/colors';
 import { BanderasRojas, hayBanderaRoja } from '../utils/triage';
 
 // Reemplazá con tu IP local
-const API_URL = 'http://192.168.1.23:3000/api'; 
+const API_URL = 'http://172.28.96.1:3000/api'; 
 
 const PREGUNTAS: { key: keyof BanderasRojas; texto: string }[] = [
   { key: 'dificultadRespiratoria', texto: '¿Tiene dificultad para respirar en este momento?' },
