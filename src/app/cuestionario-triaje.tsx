@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -21,6 +23,9 @@ import {
   TiempoSintomas,
 } from '../utils/triage';
 
+// Reemplazá con tu IP local
+const API_URL = 'http://192.168.1.23:3000/api'; 
+
 const MOTIVOS: Motivo[] = [
   'Dolor', 'Fiebre', 'Dificultad respiratoria', 
   'Herida / Trauma', 'Malestar general', 'Otro'
@@ -36,7 +41,9 @@ const SIN_BANDERAS: BanderasRojas = {
 
 export default function CuestionarioTriaje() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  
+  // Ahora capturamos TODOS los parámetros de la URL
+  const params = useLocalSearchParams();
 
   const [motivo, setMotivo] = useState<Motivo | null>(null);
   const [escalaDolor, setEscalaDolor] = useState<number | null>(null);
@@ -52,8 +59,13 @@ export default function CuestionarioTriaje() {
 
   const formularioCompleto = motivo && escalaDolor !== null && tiempoSintomas && evolucion;
 
-  const handleSiguiente = () => {
+  // Hacemos la función asíncrona para poder usar fetch
+  const handleSiguiente = async () => {
     if (!formularioCompleto) return;
+
+    const banderasRojasRecibidas = params.banderasData 
+        ? JSON.parse(params.banderasData as string) 
+        : SIN_BANDERAS;
 
     const resultado = calcularNivelTriaje(
       {
@@ -66,7 +78,8 @@ export default function CuestionarioTriaje() {
           frecuenciaCardiaca: frecuenciaCardiaca ? parseInt(frecuenciaCardiaca, 10) : undefined,
         },
         factoresRiesgo: {
-          edad: edad ? parseInt(edad, 10) : undefined,
+          // Si el usuario escribe una edad, usamos esa, sino usamos la calculada en el paso 1
+          edad: edad ? parseInt(edad, 10) : (Number(params.pacienteEdad) || undefined),
           enfermedadCronica,
           embarazo,
         },
@@ -74,11 +87,49 @@ export default function CuestionarioTriaje() {
       SIN_BANDERAS
     );
 
-    router.push(
-      `/estado-en-cola?id=${id}&nivel=${resultado.nivel}&color=${encodeURIComponent(
-        resultado.color
-      )}&colorNombre=${resultado.colorNombre}`
-    );
+    // CONSOLIDAMOS Y ENVIAMOS TODO AL BACKEND
+    try {
+      // LEEMOS EL ID DEL USUARIO GUARDADO EN MEMORIA
+      const creadorIdString = await AsyncStorage.getItem('usuarioId');
+      const creadorId = creadorIdString ? parseInt(creadorIdString, 10) : null;
+
+      const response = await fetch(`${API_URL}/turnos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hospitalId: params.id,
+          creadorId: creadorId, // <--- AGREGAMOS EL CREADOR ID ACÁ
+          pacienteNombre: params.pacienteNombre,
+          pacienteDni: params.pacienteDni,
+          pacienteEdad: edad ? parseInt(edad, 10) : Number(params.pacienteEdad) || 0,
+          motivo: motivo,
+          nivel: resultado.nivel,
+          color: resultado.color,
+          triaje: {
+              ...banderasRojasRecibidas, 
+              escalaDolor,
+              tiempoSintomas,
+              evolucion,
+              temperatura: temperatura ? parseFloat(temperatura) : undefined,
+              frecuenciaCardiaca: frecuenciaCardiaca ? parseInt(frecuenciaCardiaca, 10) : undefined,
+              enfermedadCronica,
+              embarazo,
+              detalleExtra: detalle 
+          }
+        })
+      });
+
+      if (!response.ok) {
+          Alert.alert('Error', 'No se pudo generar el turno en el sistema.');
+          return;
+      }
+
+      // Si todo sale bien, lo mandamos a la cola de espera
+      router.push('/(paciente)/miTurno');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Problema de conexión con el servidor.');
+    }
   };
 
   return (

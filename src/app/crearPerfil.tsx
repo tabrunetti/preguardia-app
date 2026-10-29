@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -9,10 +10,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
 } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '../constants/colors';
+
+
+const API_URL = 'http://192.168.1.23:3000/api';
 
 export default function CrearPerfil() {
   const router = useRouter();
@@ -20,10 +24,30 @@ export default function CrearPerfil() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleRegistrarse = () => {
-   
-    router.replace('/home');
-  };
+  const handleRegistrarse = async () => {
+  if (!nombre || !email || !password) {
+    Alert.alert('Error', 'Por favor completá todos los campos.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/auth/registro`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, email, password })
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al crear la cuenta');
+    }
+
+    // Si se crea bien, lo mandamos directo al inicio del paciente
+    router.replace('/(paciente)/home'); 
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Error', 'Hubo un problema al registrar tu cuenta.');
+  }
+};
 
   return (
     <SafeAreaView style={styles.container}>

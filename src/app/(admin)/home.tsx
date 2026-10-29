@@ -3,6 +3,8 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Colors } from '../../constants/colors';
+const API_URL = 'http://192.168.1.23:3000/api'; // Ej: 'http://192.168.0.15:3000/api'
+const HOSPITAL_ID = '5413cb68-5ddb-4840-bd09-927af05fd8e8'; // Un UUID que tengas guardado en tu tabla Hospital
 
 export default function AdminHome() {
   const router = useRouter();
@@ -12,16 +14,39 @@ export default function AdminHome() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleCrearUsuario = () => {
+  const handleCrearUsuario = async () => {
     if (!nombre || !dni || !email || !password) {
       Alert.alert('Error', 'Por favor completá todos los campos.');
       return;
     }
-    Alert.alert('¡Éxito!', `Se creó la cuenta de ${rolSeleccionado} para ${nombre} (DNI: ${dni}).`);
-    setNombre('');
-    setDni('');
-    setEmail('');
-    setPassword('');
+
+    try {
+      const response = await fetch(`${API_URL}/usuarios/personal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre,
+          dni,
+          email,
+          password,
+          rol: rolSeleccionado,
+          hospitalId: HOSPITAL_ID 
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la petición');
+      }
+
+      Alert.alert('¡Éxito!', `Se creó la cuenta de ${rolSeleccionado} para ${nombre}.`);
+      setNombre('');
+      setDni('');
+      setEmail('');
+      setPassword('');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Hubo un problema al crear el usuario en la base de datos.');
+    }
   };
 
   return (

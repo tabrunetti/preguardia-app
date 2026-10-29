@@ -14,7 +14,9 @@ import {
   View
 } from 'react-native';
 import { Colors } from '../../constants/colors';
-import { HOSPITALES, Hospital } from '../../data/hospitals';
+import { Hospital } from '../../data/hospitals';
+
+const API_URL = 'http://192.168.1.23:3000/api';
 
 function calcularDistancia(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; 
@@ -39,22 +41,30 @@ type HospitalConDistancia = Hospital & { distanciaKm?: number };
 export default function HomePaciente() {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState('');
-  const [hospitalesOrdenados, setHospitalesOrdenados] = useState<HospitalConDistancia[]>(HOSPITALES);
+  
+  // Ahora inicializamos el estado como un array vacío
+  const [hospitalesOrdenados, setHospitalesOrdenados] = useState<HospitalConDistancia[]>([]);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
 
   useEffect(() => {
-    (async () => {
-     
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      
-      if (status !== 'granted') {
-        Alert.alert('Aviso', 'Sin tu ubicación, verás la lista sin ordenar por distancia.');
-        setCargandoUbicacion(false);
-        return;
-      }
-
+    const cargarDatos = async () => {
       try {
-     
+        // 1. Buscamos los hospitales en el backend
+        const response = await fetch(`${API_URL}/hospitales`);
+        const hospitalesDB: Hospital[] = await response.json();
+
+        // 2. Pedimos permisos de ubicación
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        
+        if (status !== 'granted') {
+          Alert.alert('Aviso', 'Sin tu ubicación, verás la lista sin ordenar por distancia.');
+          // Si no hay GPS, cargamos los hospitales tal como vienen de la DB
+          setHospitalesOrdenados(hospitalesDB);
+          setCargandoUbicacion(false);
+          return;
+        }
+
+        // 3. Obtenemos la ubicación
         const ubicacion = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
         });
@@ -62,21 +72,26 @@ export default function HomePaciente() {
         const latUsuario = ubicacion.coords.latitude;
         const lonUsuario = ubicacion.coords.longitude;
 
-        const hospitalesConDistancia = HOSPITALES.map(hospital => {
+        // 4. Calculamos distancias con los datos de la base
+        const hospitalesConDistancia = hospitalesDB.map(hospital => {
           if (!hospital.lat || !hospital.lon) return { ...hospital, distanciaKm: 999 };
           const distancia = calcularDistancia(latUsuario, lonUsuario, hospital.lat, hospital.lon);
           return { ...hospital, distanciaKm: distancia };
         });
 
+        // 5. Ordenamos y guardamos
         const ordenados = hospitalesConDistancia.sort((a, b) => (a.distanciaKm || 0) - (b.distanciaKm || 0));
         setHospitalesOrdenados(ordenados);
 
       } catch (error) {
-        console.error("Error al obtener ubicación:", error);
+        console.error("Error al cargar hospitales:", error);
+        Alert.alert('Error', 'No se pudieron cargar los hospitales cercanos');
       } finally {
         setCargandoUbicacion(false);
       }
-    })();
+    };
+
+    cargarDatos();
   }, []);
 
   const hospitalesFiltrados = hospitalesOrdenados.filter((h) =>
@@ -89,8 +104,8 @@ export default function HomePaciente() {
     onPress={() => router.push(`/detalleHospital?id=${item.id}`)}
   >
     {item.imagen && (
-  <Image source={item.imagen} style={styles.cardImage} />
-  )}
+  <Image source={{ uri: item.imagen }} style={styles.cardImage} />
+)}
 
     <View style={styles.cardContent}>
       <View style={styles.cardHeader}>

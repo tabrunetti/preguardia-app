@@ -1,6 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   Image,
   Pressable,
   StyleSheet,
@@ -15,28 +17,49 @@ export default function SplashLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-const handleIngresar = () => {
-    
-    const correo = email.toLowerCase().trim();
+const API_URL = 'http://192.168.1.23:3000/api';
 
-    if (correo === "admin@hospital.com") {
-      router.replace("/(admin)/home");
+const handleIngresar = async () => {
+  if (!email || !password) {
+    Alert.alert('Error', 'Por favor ingresá tu correo y contraseña.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) {
+      Alert.alert('Error', 'Correo o contraseña incorrectos');
       return;
-    } 
-    
-    if (correo === "secretaria@hospital.com") {
-      
-      router.replace("/(secretaria)/ingreso"); 
-      return;
-    } 
-    
-    if (correo === "ambulancia@hospital.com" || correo === "profesional@hospital.com") {
-      router.replace("/ambulancia/home"); 
-      return;
-    } 
-    
-    router.replace("/(paciente)/home");
-  };
+    }
+
+    const usuario = await response.json();
+    await AsyncStorage.setItem('usuarioId', usuario.id.toString());
+
+    // Redirección basada en el rol que devuelve la base de datos
+    switch (usuario.rol) {
+      case 'Admin':
+        router.replace("/(admin)/home");
+        break;
+      case 'Secretaria':
+        router.replace("/(secretaria)/ingreso");
+        break;
+      case 'Ambulancia':
+      case 'Profesional':
+        router.replace("/ambulancia/home");
+        break;
+      default: // Paciente
+        router.replace("/(paciente)/home");
+    }
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Error', 'No se pudo conectar con el servidor.');
+  }
+};
 
   const handleCrearCuenta = () => {
     router.push("/crearPerfil");

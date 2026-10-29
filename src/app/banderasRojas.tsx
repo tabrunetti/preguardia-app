@@ -1,10 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '../constants/colors';
 import { BanderasRojas, hayBanderaRoja } from '../utils/triage';
+
+// Reemplazá con tu IP local
+const API_URL = 'http://192.168.1.23:3000/api'; 
 
 const PREGUNTAS: { key: keyof BanderasRojas; texto: string }[] = [
   { key: 'dificultadRespiratoria', texto: '¿Tiene dificultad para respirar en este momento?' },
@@ -18,7 +22,9 @@ const PREGUNTAS: { key: keyof BanderasRojas; texto: string }[] = [
 
 export default function BanderasRojasScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  
+  // Ahora capturamos TODOS los parámetros de la URL, no solo el ID
+  const params = useLocalSearchParams(); 
 
   const [respuestas, setRespuestas] = useState<BanderasRojas>({
     dificultadRespiratoria: false,
@@ -30,20 +36,52 @@ export default function BanderasRojasScreen() {
     convulsionReciente: false,
   });
 
-  const handleContinuar = () => {
+  // Hacemos la función asíncrona para poder usar fetch
+  const handleContinuar = async () => {
     const bandera = hayBanderaRoja(respuestas);
 
     if (bandera.activa) {
-     
-      router.push(
-        `/estado-en-cola?id=${id}&nivel=Emergencia&color=%23EF4444&colorNombre=Rojo&motivo=${encodeURIComponent(
-          bandera.motivo ?? ''
-        )}`
-      );
+      try {
+        // LEEMOS EL ID DEL USUARIO GUARDADO EN MEMORIA
+        const creadorIdString = await AsyncStorage.getItem('usuarioId');
+        const creadorId = creadorIdString ? parseInt(creadorIdString, 10) : null;
+
+        const response = await fetch(`${API_URL}/turnos`, { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hospitalId: params.id,
+            creadorId: creadorId, // <--- AGREGAMOS EL CREADOR ID ACÁ
+            pacienteNombre: params.pacienteNombre,
+            pacienteDni: params.pacienteDni,
+            pacienteEdad: Number(params.pacienteEdad) || 0,
+            motivo: bandera.motivo, 
+            nivel: 'Resucitación', 
+            color: '#EF4444',
+            triaje: respuestas 
+          })
+        });
+
+        if (!response.ok) {
+          Alert.alert('Error', 'No se pudo generar el turno de emergencia en el sistema.');
+          return;
+        }
+
+        router.push('/(paciente)/miTurno');
+      } catch (error) {
+        console.error(error);
+        Alert.alert('Error', 'Problema de conexión con el servidor.');
+      }
       return;
     }
 
-    router.push(`/cuestionario-triaje?id=${id}`);
+    // SI NO HAY BANDERA ROJA: Pasamos los datos a la última pantalla
+    const nextParams = new URLSearchParams({
+      ...(params as any), // Copiamos id, nombre, dni, edad...
+      banderasData: JSON.stringify(respuestas) // Pasamos las respuestas negativas
+    }).toString();
+
+    router.push(`/cuestionario-triaje?${nextParams}`);
   };
 
   return (

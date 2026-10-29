@@ -1,16 +1,56 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../constants/colors';
-import { HOSPITALES } from '../data/hospitals';
+
+// La IP de tu compu
+const API_URL = 'http://192.168.1.23:3000/api'; 
 
 export default function DetalleHospital() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const hospital = HOSPITALES.find((h) => h.id === id) ?? HOSPITALES[0];
+  
+  const [hospital, setHospital] = useState<any>(null);
+  const [stats, setStats] = useState<any>(null); // <--- NUEVO: Estado para las estadísticas
+  const [cargando, setCargando] = useState(true);
+
+  useEffect(() => {
+    const fetchDatos = async () => {
+      try {
+        // Buscamos los datos del hospital y las estadísticas al mismo tiempo
+        const [resHospital, resStats] = await Promise.all([
+          fetch(`${API_URL}/hospitales/${id}`),
+          fetch(`${API_URL}/hospitales/${id}/stats`)
+        ]);
+
+        if (!resHospital.ok) throw new Error('No se pudo cargar el hospital');
+        
+        const dataHospital = await resHospital.json();
+        setHospital(dataHospital);
+
+        // Guardamos las estadísticas si responde bien, sino ponemos todo en 0
+        if (resStats.ok) {
+           const dataStats = await resStats.json();
+           setStats(dataStats);
+        } else {
+           setStats({ totalEnEspera: 0, demoraEstimadaMinutos: 0, niveles: {} });
+        }
+
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    if (id) {
+      fetchDatos();
+    }
+  }, [id]);
 
   const abrirMapa = () => {
-    if (!hospital.lat || !hospital.lon) return;
+    if (!hospital?.lat || !hospital?.lon) return;
     
     const url = Platform.select({
       ios: `maps:0,0?q=${hospital.nombre}@${hospital.lat},${hospital.lon}`,
@@ -20,17 +60,35 @@ export default function DetalleHospital() {
     if (url) Linking.openURL(url);
   };
 
+  if (cargando) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
+  if (!hospital) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>No se encontró el hospital.</Text>
+        <Pressable onPress={() => router.back()} style={{ marginTop: 20 }}>
+          <Text style={{ color: Colors.primary }}>Volver</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container} bounces={false}>
       
       <View style={styles.imageContainer}>
-        
         {hospital.imagen ? (
-  <Image 
-    source={hospital.imagen} 
-    style={styles.headerImage} 
-  />
-) : (
+          <Image 
+            source={{ uri: hospital.imagen }} 
+            style={styles.headerImage} 
+          />
+        ) : (
           <View style={styles.imagePlaceholder}>
             <Ionicons name="business" size={60} color={Colors.border} />
           </View>
@@ -45,23 +103,25 @@ export default function DetalleHospital() {
         <Text style={styles.nombre}>{hospital.nombre}</Text>
         <Text style={styles.direccion}>📍 {hospital.direccion}</Text>
 
-
         <Pressable onPress={abrirMapa} style={styles.mapaLink}>
           <Ionicons name="map" size={16} color={Colors.primary} />
           <Text style={styles.mapaTexto}>Ir a mapas</Text>
         </Pressable>
 
+        {/* --- ESTADÍSTICAS DINÁMICAS --- */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
-            <Text style={[styles.statValor, { color: Colors.primary }]}>{hospital.enEspera}</Text>
+            <Text style={[styles.statValor, { color: Colors.primary }]}>{stats?.totalEnEspera || 0}</Text>
             <Text style={styles.statLabel}>En espera</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={[styles.statValor, { color: Colors.warning }]}>{hospital.distanciaTiempo}</Text>
+            <Text style={[styles.statValor, { color: Colors.warning }]}>{stats?.demoraEstimadaMinutos || 0} min</Text>
             <Text style={styles.statLabel}>Est. demora</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={[styles.statValor, { color: Colors.success }]}>{hospital.gravedad}</Text>
+            <Text style={[styles.statValor, { color: Colors.success }]}>
+               {stats?.niveles['Resucitación'] > 0 || stats?.niveles['Emergencia'] > 0 ? 'Alta' : 'Baja'}
+            </Text>
             <Text style={styles.statLabel}>Gravedad</Text>
           </View>
         </View>
@@ -69,23 +129,29 @@ export default function DetalleHospital() {
         <Text style={styles.seccion}>Estado actual de la Guardia (por nivel)</Text>
 
         <View style={styles.nivelesContainer}>
-          {hospital.niveles.map((n, index) => (
-            <View 
-              key={n.nivel} 
-              style={[
-                styles.nivelRow, 
-                index === hospital.niveles.length - 1 && { borderBottomWidth: 0 }  
-              ]}
-            >
-              <View style={styles.nivelLeft}>
-                <View style={[styles.dot, { backgroundColor: n.color }]} />
-                <Text style={styles.nivelNombre}>{n.nivel}</Text>
+            {stats && stats.niveles && Object.entries(stats.niveles).map(([nivelNombre, cantidad], index, array) => {
+                let colorPunto = Colors.success;
+                if (nivelNombre === 'Resucitación') colorPunto = Colors.danger;
+                if (nivelNombre === 'Emergencia') colorPunto = '#FF5722'; 
+                if (nivelNombre === 'Urgencia') colorPunto = Colors.warning;
+                if (nivelNombre === 'Menos Urgente') colorPunto = '#CDDC39'; 
+
+                return (
+                    <View key={nivelNombre} style={[styles.nivelRow, index === array.length - 1 && { borderBottomWidth: 0 }]}>
+                    <View style={styles.nivelLeft}>
+                        <View style={[styles.dot, { backgroundColor: colorPunto }]} />
+                        <Text style={styles.nivelNombre}>{nivelNombre}</Text>
+                    </View>
+                    <Text style={styles.nivelInfo}>{String(cantidad)} pac.</Text>
+                    </View>
+                );
+            })}
+            
+            {(!stats || !stats.niveles || Object.keys(stats.niveles).length === 0) && (
+              <View style={[styles.nivelRow, { borderBottomWidth: 0, justifyContent: 'center' }]}>
+                <Text style={styles.nivelInfo}>Sin pacientes en espera</Text>
               </View>
-              <Text style={styles.nivelInfo}>
-                {n.pacientes} pac. ({n.detalle})
-              </Text>
-            </View>
-          ))}
+            )}
         </View>
       </View>
 

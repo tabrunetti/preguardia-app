@@ -64,9 +64,29 @@ export default function PreRegistro() {
     setFechaNacimiento(d.fechaNacimiento);
   };
 
-  const handleSiguiente = () => {
-    router.push(`/banderasRojas?id=${hospital.id}`);
-  };
+  // En preRegistro.tsx - Reemplaza la función handleSiguiente
+const handleSiguiente = () => {
+    // Validación básica para evitar envíos vacíos
+    if (!nombre || !dni || !fechaNacimiento || !telefono || !contactoEmergencia) {
+        alert("Por favor completa los campos obligatorios");
+        return;
+    }
+    
+    // Calculamos una edad aproximada en base a la fecha de nacimiento para el cuestionario posterior
+    const yearNacimiento = parseInt(fechaNacimiento.split('/').pop() || "0");
+    const edadCalculada = yearNacimiento ? new Date().getFullYear() - yearNacimiento : 0;
+    
+    // Codificamos los datos para enviarlos por URL
+    const params = new URLSearchParams({
+        id: id as string,
+        pacienteNombre: nombre,
+        pacienteDni: dni,
+        pacienteEdad: edadCalculada.toString(),
+        pacienteSexo: 'No especificado', // Puedes agregar esto al formulario luego si lo deseas
+    }).toString();
+
+    router.push(`/banderasRojas?${params}`);
+};
 
   return (
     <SafeAreaView style={styles.container}>

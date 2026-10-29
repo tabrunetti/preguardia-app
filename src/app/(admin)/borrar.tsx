@@ -1,38 +1,83 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const MOCK_USUARIOS = [
-  { id: '1', email: 'secretaria@hospital', rol: 'Secretaría' },
-  { id: '2', email: 'ambulancia@hospital', rol: 'Ambulancia' },
-  { id: '3', email: 'guardia_noche@hospital', rol: 'Secretaría' },
-];
+const API_URL = 'http://192.168.1.23:3000/api'; 
+const HOSPITAL_ID = '5413cb68-5ddb-4840-bd09-927af05fd8e8';
 
 export default function BorrarUsuarios() {
-  const [usuarios, setUsuarios] = useState(MOCK_USUARIOS);
+  // Inicializamos el estado vacío en lugar de usar MOCK_USUARIOS
+  const [usuarios, setUsuarios] = useState<any[]>([]);
 
-  const handleBorrar = (id: string, email: string) => {
-    
-    Alert.alert(
-      "Eliminar Acceso",
-      `¿Estás seguro que querés borrar la cuenta de ${email}? No podrá volver a ingresar al sistema.`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        { 
-          text: "Eliminar", 
-          style: "destructive",
-          onPress: () => {
-        
-            setUsuarios(prev => prev.filter(u => u.id !== id));
-            Alert.alert('Listo', 'El usuario fue eliminado correctamente.');
-          }
-        }
-      ]
-    );
+  // Función para traer los datos del backend
+  const cargarUsuarios = async () => {
+    try {
+      const response = await fetch(`${API_URL}/hospitales/${HOSPITAL_ID}/personal`);
+      const data = await response.json();
+      setUsuarios(data);
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+    }
   };
 
-  const renderItem = ({ item }: { item: typeof MOCK_USUARIOS[0] }) => (
+  // Se ejecuta una vez cuando entras a la pantalla
+  useEffect(() => {
+    cargarUsuarios();
+  }, []);
+
+  // Ojo: id ahora es un number (porque así lo definiste en Prisma)
+  const handleBorrar = async (id: number, email: string) => { 
+    // Separamos la lógica de borrado para reutilizarla
+    const ejecutarBorrado = async () => {
+      try {
+        const response = await fetch(`${API_URL}/usuarios/${id}/desactivar`, {
+          method: 'PATCH'
+        });
+        
+        if (!response.ok) {
+          throw new Error('Falló la petición al backend');
+        }
+
+        // Lo sacamos de la lista visualmente
+        setUsuarios(prev => prev.filter(u => u.id !== id));
+        
+        if (Platform.OS === 'web') {
+          window.alert('El usuario fue eliminado correctamente.');
+        } else {
+          Alert.alert('Listo', 'El usuario fue eliminado correctamente.');
+        }
+      } catch (error) {
+        console.error(error);
+        if (Platform.OS === 'web') {
+          window.alert('Error: No se pudo eliminar el usuario.');
+        } else {
+          Alert.alert('Error', 'No se pudo eliminar el usuario.');
+        }
+      }
+    };
+
+    // Si estamos en la compu (Web), usamos el confirm del navegador
+    if (Platform.OS === 'web') {
+      const confirmacion = window.confirm(`¿Estás seguro que querés borrar la cuenta de ${email}?`);
+      if (confirmacion) {
+        await ejecutarBorrado();
+      }
+    } else {
+      // Si estamos en el celular, usamos el Alert nativo
+      Alert.alert(
+        "Eliminar Acceso",
+        `¿Estás seguro que querés borrar la cuenta de ${email}?`,
+        [
+          { text: "Cancelar", style: "cancel" },
+          { text: "Eliminar", style: "destructive", onPress: ejecutarBorrado }
+        ]
+      );
+    }
+  };
+
+  // En el renderItem asegurate de cambiar el tipo del id si te tira error
+  const renderItem = ({ item }: { item: any }) => (
     <View style={styles.card}>
       <View style={styles.info}>
         <Text style={styles.email}>{item.email}</Text>
