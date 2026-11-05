@@ -50,7 +50,6 @@ type Familiar = {
   
 };
 
-// Datos comunes que usa el autocompletado
 type DatosPersona = {
   nombre: string;
   dni: string | null;
@@ -87,7 +86,6 @@ export default function PreRegistro() {
   const [seleccionado, setSeleccionado] = useState<string | null>(null);
   const [faltantes, setFaltantes] = useState<string[] | null>(null);
   const [verificando, setVerificando] = useState(false);
-  // Trae al usuario logueado y sus familiares desde la base
   const cargarPersonas = useCallback(async () => {
     try {
       const usuarioId = await AsyncStorage.getItem("usuarioId");
@@ -145,7 +143,6 @@ export default function PreRegistro() {
   const handleAutocompletar = (p: Persona) => {
     const d = p.datos;
     setSeleccionado(p.id);
-    // Se pisan todos los campos para no arrastrar datos de otra persona
     setNombre(d.nombre ?? "");
     setDni(formatearDniVisual(d.dni));
     setFechaNacimiento(d.fechaNacimiento ?? "");
@@ -184,7 +181,6 @@ export default function PreRegistro() {
       return;
     }
 
-    // Antes de seguir, verificamos que el usuario no tenga ya un turno vigente
     setVerificando(true);
     try {
       const usuarioId = await AsyncStorage.getItem("usuarioId");
@@ -212,7 +208,6 @@ export default function PreRegistro() {
       setVerificando(false);
     }
 
-    // Edad exacta (tiene en cuenta si ya cumplió años este año)
     const edadCalculada = calcularEdad(fechaNacimiento) ?? 0;
 
     const params = new URLSearchParams({

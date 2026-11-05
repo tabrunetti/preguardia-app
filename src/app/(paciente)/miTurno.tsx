@@ -66,7 +66,6 @@ export default function MiTurnoScreen() {
     }
   }, []);
 
-    // Recarga al entrar a la pestaña y cada 20 s mientras esté abierta
   useFocusEffect(
     useCallback(() => {
       cargarTurno();

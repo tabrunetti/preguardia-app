@@ -22,7 +22,6 @@ import {
   TiempoSintomas,
 } from '../utils/triage';
 
-// Reemplazá con tu IP local
 import { apiFetch } from '../utils/api';
 
 const MOTIVOS: Motivo[] = [
@@ -41,7 +40,6 @@ const SIN_BANDERAS: BanderasRojas = {
 export default function CuestionarioTriaje() {
   const router = useRouter();
   
-  // Ahora capturamos TODOS los parámetros de la URL
   const params = useLocalSearchParams();
 
   const [motivo, setMotivo] = useState<Motivo | null>(null);
@@ -56,14 +54,12 @@ export default function CuestionarioTriaje() {
   const [enfermedadCronica, setEnfermedadCronica] = useState(false);
   const [embarazo, setEmbarazo] = useState(false);
 
-  // Si elige "Otro", el texto pasa a ser el motivo de consulta (obligatorio)
   const esOtro = motivo === 'Otro';
   const motivoFinal = esOtro ? detalle.trim() : motivo;
 
   const formularioCompleto =
     motivo && (!esOtro || detalle.trim() !== '') && escalaDolor !== null && tiempoSintomas && evolucion;
 
-  // Hacemos la función asíncrona para poder usar fetch
   const handleSiguiente = async () => {
     if (!formularioCompleto) return;
 
@@ -82,7 +78,6 @@ export default function CuestionarioTriaje() {
           frecuenciaCardiaca: frecuenciaCardiaca ? parseInt(frecuenciaCardiaca, 10) : undefined,
         },
         factoresRiesgo: {
-          // Si el usuario escribe una edad, usamos esa, sino usamos la calculada en el paso 1
           edad: edad ? parseInt(edad, 10) : (Number(params.pacienteEdad) || undefined),
           enfermedadCronica,
           embarazo,
@@ -91,7 +86,6 @@ export default function CuestionarioTriaje() {
       SIN_BANDERAS
     );
 
-    // CONSOLIDAMOS Y ENVIAMOS TODO AL BACKEND
     try {
 
       const response = await apiFetch(`/turnos`, {
@@ -124,7 +118,6 @@ export default function CuestionarioTriaje() {
           return;
       }
 
-      // Si todo sale bien, lo mandamos a la cola de espera
       router.push('/(paciente)/miTurno');
     } catch (error) {
       console.error(error);
@@ -160,7 +153,7 @@ export default function CuestionarioTriaje() {
                 style={[styles.chip, motivo === m && styles.chipActivo]}
                 onPress={() => {
                   setMotivo(m);
-                  if (m !== 'Otro') setDetalle(''); // el texto solo aplica a "Otro"
+                  if (m !== 'Otro') setDetalle('');
                 }}
               >
                 <Text style={[styles.chipTexto, motivo === m && styles.chipTextoActivo]}>{m}</Text>
@@ -213,7 +206,6 @@ export default function CuestionarioTriaje() {
             ))}
           </View>
 
-          {/* Solo con "Otro": el paciente escribe su motivo de consulta */}
           {esOtro && (
             <>
               <Text style={styles.label}>¿Cuál es el motivo de su consulta?</Text>

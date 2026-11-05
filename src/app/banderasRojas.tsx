@@ -6,7 +6,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from '../constants/colors';
 import { BanderasRojas, hayBanderaRoja } from '../utils/triage';
 
-// Reemplazá con tu IP local
 import { apiFetch } from '../utils/api';
 
 const PREGUNTAS: { key: keyof BanderasRojas; texto: string }[] = [
@@ -22,7 +21,6 @@ const PREGUNTAS: { key: keyof BanderasRojas; texto: string }[] = [
 export default function BanderasRojasScreen() {
   const router = useRouter();
   
-  // Ahora capturamos TODOS los parámetros de la URL, no solo el ID
   const params = useLocalSearchParams(); 
 
   const [respuestas, setRespuestas] = useState<BanderasRojas>({
@@ -35,7 +33,6 @@ export default function BanderasRojasScreen() {
     convulsionReciente: false,
   });
 
-  // Hacemos la función asíncrona para poder usar fetch
   const handleContinuar = async () => {
     const bandera = hayBanderaRoja(respuestas);
 
@@ -71,10 +68,9 @@ export default function BanderasRojasScreen() {
       return;
     }
 
-    // SI NO HAY BANDERA ROJA: Pasamos los datos a la última pantalla
     const nextParams = new URLSearchParams({
-      ...(params as any), // Copiamos id, nombre, dni, edad...
-      banderasData: JSON.stringify(respuestas) // Pasamos las respuestas negativas
+      ...(params as any),
+      banderasData: JSON.stringify(respuestas)
     }).toString();
 
     router.push(`/cuestionario-triaje?${nextParams}`);

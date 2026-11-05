@@ -42,29 +42,24 @@ export default function HomePaciente() {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState('');
   
-  // Ahora inicializamos el estado como un array vacío
   const [hospitalesOrdenados, setHospitalesOrdenados] = useState<HospitalConDistancia[]>([]);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        // 1. Buscamos los hospitales en el backend
         const response = await apiFetch(`/hospitales`);
         const hospitalesDB: Hospital[] = await response.json();
 
-        // 2. Pedimos permisos de ubicación
         const { status } = await Location.requestForegroundPermissionsAsync();
         
         if (status !== 'granted') {
           Alert.alert('Aviso', 'Sin tu ubicación, verás la lista sin ordenar por distancia.');
-          // Si no hay GPS, cargamos los hospitales tal como vienen de la DB
           setHospitalesOrdenados(hospitalesDB);
           setCargandoUbicacion(false);
           return;
         }
 
-        // 3. Obtenemos la ubicación
         const ubicacion = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
         });
@@ -72,14 +67,12 @@ export default function HomePaciente() {
         const latUsuario = ubicacion.coords.latitude;
         const lonUsuario = ubicacion.coords.longitude;
 
-        // 4. Calculamos distancias con los datos de la base
         const hospitalesConDistancia = hospitalesDB.map(hospital => {
           if (!hospital.lat || !hospital.lon) return { ...hospital, distanciaKm: 999 };
           const distancia = calcularDistancia(latUsuario, lonUsuario, hospital.lat, hospital.lon);
           return { ...hospital, distanciaKm: distancia };
         });
 
-        // 5. Ordenamos y guardamos
         const ordenados = hospitalesConDistancia.sort((a, b) => (a.distanciaKm || 0) - (b.distanciaKm || 0));
         setHospitalesOrdenados(ordenados);
 
@@ -225,9 +218,8 @@ cardContent: {
   cardDireccion: { fontSize: 13, color: Colors.textLight, marginTop: 6, marginBottom: 12 },
   cardFooter: { flexDirection: 'row', gap: 16, borderTopWidth: 1, borderTopColor: Colors.surface, paddingTop: 12 },
   cardInfo: { fontSize: 13, color: Colors.textLight, fontWeight: '500' },
-  // Estilos de la cabecera (usando Colors.primary)
   header: { 
-    backgroundColor: Colors.primary, // <-- Usamos el color principal
+    backgroundColor: Colors.primary,
     paddingHorizontal: 24, 
     paddingTop: 20, 
     paddingBottom: 24,
@@ -248,12 +240,12 @@ cardContent: {
     letterSpacing: 1,
     textTransform: 'uppercase'
   },
-  tituloPrincipalHeader: { // Renombrado para no pisar otros titulos
+  tituloPrincipalHeader: {
     fontSize: 26, 
     fontWeight: 'bold', 
     color: '#FFFFFF' 
   },
-  subtituloHeader: { // Renombrado para no pisar otros subtitulos
+  subtituloHeader: {
     fontSize: 15, 
     color: 'rgba(255,255,255,0.8)', 
     marginTop: 4 

@@ -20,7 +20,6 @@ export type Familiar = DatosPersona & {
   parentesco: string;
 };
 
-// Mock del paciente logueado (después vendría del backend)
 export const USER_DATA: Paciente = {
   nombre: 'Tiago Abel',
   apellido: 'Brunetti',
@@ -33,7 +32,6 @@ export const USER_DATA: Paciente = {
   contactoEmergencia: null,
 };
 
-// ---- Store en memoria del grupo familiar ----
 let familiares: Familiar[] = [
   {
     id: '1',

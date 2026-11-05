@@ -32,7 +32,6 @@ export default function FichaEditable() {
 
   const volver = () => router.navigate('/secretaria/turnos');
 
-  // Se recarga cada vez que se abre la ficha (por si es otro paciente)
   useFocusEffect(
     useCallback(() => {
       let cancelado = false;

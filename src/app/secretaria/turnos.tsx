@@ -40,7 +40,6 @@ export default function SecretariaSalaEspera() {
       const res = await apiFetch(`/turnos/hospital/${hospitalId}?estados=Activo`);
       if (!res.ok) throw new Error();
       const data: Turno[] = await res.json();
-      // Primero por prioridad, después por orden de llegada
       data.sort(
         (a, b) =>
           ordenDeNivel(a.nivel) - ordenDeNivel(b.nivel) ||

@@ -53,7 +53,6 @@ export default function AmbulanciaHome() {
         const pos = await Location.getCurrentPositionAsync({});
         setUbicacion({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
       } catch {
-        // Sin ubicación: se muestran sin distancia
       }
     })();
   }, []);

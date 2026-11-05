@@ -40,7 +40,6 @@ export default function SecretariaHistorial() {
       const res = await apiFetch(`/turnos/hospital/${hospitalId}?estados=Finalizado`);
       if (!res.ok) throw new Error();
       const data: Turno[] = await res.json();
-      // Los atendidos más recientes primero
       data.sort(
         (a, b) =>
           new Date(b.fechaAtencion ?? b.fechaCreacion).getTime() -

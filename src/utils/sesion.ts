@@ -2,9 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-// ---------- Token ----------
-// En Android/iOS el token se guarda CIFRADO con expo-secure-store (Keychain / Keystore).
-// En la web SecureStore no existe, así que ahí queda en AsyncStorage (= localStorage).
 const CLAVE_TOKEN = 'token';
 const esWeb = Platform.OS === 'web';
 
@@ -19,7 +16,6 @@ async function leerToken(): Promise<string | null> {
   const token = await SecureStore.getItemAsync(CLAVE_TOKEN);
   if (token) return token;
 
-  // Sesiones viejas: el token estaba en AsyncStorage. Lo pasamos a SecureStore y lo borramos de ahí.
   const viejo = await AsyncStorage.getItem(CLAVE_TOKEN);
   if (viejo) {
     await SecureStore.setItemAsync(CLAVE_TOKEN, viejo);
@@ -29,13 +25,10 @@ async function leerToken(): Promise<string | null> {
 }
 
 async function borrarToken() {
-  await AsyncStorage.removeItem(CLAVE_TOKEN); // en web es el único lugar; en el celular limpia restos viejos
+  await AsyncStorage.removeItem(CLAVE_TOKEN);
   if (!esWeb) await SecureStore.deleteItemAsync(CLAVE_TOKEN);
 }
 
-// ---------- Resto de la sesión ----------
-// usuarioId, rol y hospitalId no son secretos (el backend valida todo con el token),
-// así que siguen en AsyncStorage como antes.
 const CLAVES_SESION = ['usuarioId', 'rol', 'hospitalId'];
 
 export type Sesion = {
@@ -51,7 +44,6 @@ type UsuarioLogueado = {
   hospitalId?: string | null;
 };
 
-// Guarda la sesión que devuelve /auth/login o /auth/registro, borrando cualquier sesión anterior
 export async function guardarSesion(token: string, usuario: UsuarioLogueado) {
   await cerrarSesion();
   const datos: [string, string][] = [

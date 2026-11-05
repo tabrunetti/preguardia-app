@@ -34,7 +34,6 @@ export default function DetalleHospital() {
     }
   }, [id]);
 
-  // Al entrar: hospital + stats. Mientras está abierta: stats cada 20 s
   useFocusEffect(
     useCallback(() => {
       let cancelado = false;

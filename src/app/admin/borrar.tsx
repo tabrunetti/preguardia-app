@@ -10,7 +10,6 @@ import { apiFetch } from '../../utils/api';
 export default function BorrarUsuarios() {
   const [usuarios, setUsuarios] = useState<any[]>([]);
 
-  // Trae el personal del hospital del admin logueado
   const cargarUsuarios = useCallback(async () => {
     try {
       const hospitalId = await AsyncStorage.getItem('hospitalId');
@@ -26,16 +25,13 @@ export default function BorrarUsuarios() {
     }
   }, []);
 
-  // Se recarga cada vez que entrás a la pestaña (así aparecen los recién creados)
   useFocusEffect(
     useCallback(() => {
       cargarUsuarios();
     }, [cargarUsuarios])
   );
 
-  // Ojo: id ahora es un number (porque así lo definiste en Prisma)
   const handleBorrar = async (id: number, email: string) => { 
-    // Separamos la lógica de borrado para reutilizarla
     const ejecutarBorrado = async () => {
       try {
         const response = await apiFetch(`/usuarios/${id}/desactivar`, {
@@ -46,7 +42,6 @@ export default function BorrarUsuarios() {
           throw new Error('Falló la petición al backend');
         }
 
-        // Lo sacamos de la lista visualmente
         setUsuarios(prev => prev.filter(u => u.id !== id));
         
         if (Platform.OS === 'web') {
@@ -64,14 +59,12 @@ export default function BorrarUsuarios() {
       }
     };
 
-    // Si estamos en la compu (Web), usamos el confirm del navegador
     if (Platform.OS === 'web') {
       const confirmacion = window.confirm(`¿Estás seguro que querés borrar la cuenta de ${email}?`);
       if (confirmacion) {
         await ejecutarBorrado();
       }
     } else {
-      // Si estamos en el celular, usamos el Alert nativo
       Alert.alert(
         "Eliminar Acceso",
         `¿Estás seguro que querés borrar la cuenta de ${email}?`,
@@ -83,7 +76,6 @@ export default function BorrarUsuarios() {
     }
   };
 
-  // En el renderItem asegurate de cambiar el tipo del id si te tira error
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.card}>
       <View style={styles.info}>
@@ -110,7 +102,6 @@ export default function BorrarUsuarios() {
         <Text style={styles.subtitulo}>Lista de usuarios con acceso al sistema.</Text>
       </View>
 
-      {/* Se mantiene el FlatList envuelto en un View para sus márgenes */}
       <View style={styles.content}>
         <FlatList
           data={usuarios}
@@ -160,10 +151,8 @@ const styles = StyleSheet.create({
     borderRadius: 8 
   },
   vacio: { textAlign: 'center', color: Colors.textLight, marginTop: 40 },
-  // Modifica content (solo dejamos el margen horizontal y flex):
   content: { paddingHorizontal: 24, flex: 1 },
 
-  // Agrega/Reemplaza los estilos de cabecera:
   header: { 
     backgroundColor: '#1F2937', 
     paddingHorizontal: 24, 

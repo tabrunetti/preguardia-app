@@ -18,5 +18,4 @@ export const infoNivel = (nombre?: string | null) => NIVELES.find((n) => n.nombr
 export const colorDeNivel = (nombre?: string | null, colorGuardado?: string | null) =>
   colorGuardado ?? infoNivel(nombre)?.color ?? '#9CA3AF';
 
-// Para ordenar: Emergencia primero; niveles desconocidos al final
 export const ordenDeNivel = (nombre?: string | null) => infoNivel(nombre)?.orden ?? 99;

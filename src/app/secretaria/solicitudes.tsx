@@ -55,7 +55,6 @@ export default function SolicitudesPendientes() {
     }
   }, []);
 
-  // Carga al entrar y se actualiza cada 20 s mientras la pestaña está abierta
   useFocusEffect(
     useCallback(() => {
       cargar();

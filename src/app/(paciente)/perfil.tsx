@@ -53,7 +53,6 @@ type CampoUsuario = 'nombre' | 'email' | 'dni' | 'fechaNacimiento' | 'celular' |
 
 const formatearDniVisual = (dni: string) => dni.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-// ---------- Validaciones ----------
 const validar = (campo: CampoUsuario, valor: string): string | null => {
   const v = valor.trim();
   if ((campo === 'nombre' || campo === 'email') && !v) return 'Este campo es obligatorio.';
@@ -65,7 +64,6 @@ const validar = (campo: CampoUsuario, valor: string): string | null => {
   return null;
 };
 
-// ---------- Campo editable en línea ----------
 type CampoEditableProps = {
   label: string;
   valor: string | null;
@@ -73,7 +71,7 @@ type CampoEditableProps = {
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
   autoCapitalize?: 'none' | 'words' | 'sentences';
   maxLength?: number;
-  mascara?: (texto: string) => string; // ej. mascaraFecha: agrega las barras al escribir
+  mascara?: (texto: string) => string;
   onGuardar: (nuevoValor: string) => Promise<boolean>;
 };
 
@@ -154,7 +152,6 @@ const CampoEditable = ({
   );
 };
 
-// ---------- Pantalla ----------
 export default function PerfilScreen() {
   const router = useRouter();
 
@@ -187,7 +184,6 @@ export default function PerfilScreen() {
     }
   }, []);
 
-  // Se recarga cada vez que volvés a esta pantalla (por ejemplo, después de agregar un familiar)
   useFocusEffect(
     useCallback(() => {
       cargarDatos();

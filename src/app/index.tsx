@@ -14,7 +14,6 @@ import { Colors } from "../constants/colors";
 import { apiFetch } from '../utils/api';
 import { guardarSesion, obtenerSesion } from '../utils/sesion';
 
-// Pantalla de inicio de cada rol
 const rutaPorRol = (rol: string | null) => {
   switch (rol) {
     case 'Admin':
@@ -35,8 +34,6 @@ export default function SplashLogin() {
   const [password, setPassword] = useState("");
   const [verificandoSesion, setVerificandoSesion] = useState(true);
 
-  // Si ya hay una sesión guardada, entramos directo (si el token venció,
-  // el primer request devuelve 401 y apiFetch nos trae de vuelta acá)
   useEffect(() => {
     obtenerSesion()
       .then(({ token, rol }) => {
@@ -45,7 +42,6 @@ export default function SplashLogin() {
       })
       .catch(() => setVerificandoSesion(false));
   }, []);
-
 
 const handleIngresar = async () => {
   if (!email || !password) {
@@ -69,7 +65,6 @@ const handleIngresar = async () => {
 
     const { token, usuario } = data;
 
-    // Guardamos la sesión (borrando datos de una sesión anterior)
     await guardarSesion(token, usuario);
 
     router.replace(rutaPorRol(usuario.rol));
@@ -86,7 +81,6 @@ const handleIngresar = async () => {
     router.push("/olvideContrasena");
   };
 
-  // Mientras revisamos si hay sesión, no mostramos el login (evita el parpadeo)
   if (verificandoSesion) {
     return <View style={{ flex: 1, backgroundColor: Colors.background }} />;
   }
@@ -161,7 +155,7 @@ const styles = StyleSheet.create({
   },
   tituloApp: {
     fontSize: 34,
-    fontFamily: 'Outfit_700Bold', // Usá esta línea si ya tenés cargada la fuente Outfit, sino cambiala por fontWeight: "bold"
+    fontFamily: 'Outfit_700Bold',
     fontWeight: "bold",
     marginTop: 12,
     letterSpacing: -0.5,

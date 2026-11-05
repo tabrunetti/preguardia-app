@@ -68,7 +68,6 @@ export default function CrearPerfil() {
         return;
       }
 
-      // Guardamos la sesión igual que en el login
       await guardarSesion(data.token, usuario);
 
       router.replace('/(paciente)/home');

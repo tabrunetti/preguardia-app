@@ -18,7 +18,6 @@ const INCIDENTES = [
   'Trauma', 'Cardiovascular', 'Respiratorio', 'Neurológico', 'Obstétrico', 'Intoxicación', 'Quemadura', 'Otro',
 ] as const;
 
-// Rojo/Naranja/Amarillo/Verde → Emergencia/Urgente/Moderado/Leve
 const PRIORIDADES = NIVELES.slice(0, 4);
 const PRIORIDADES_NOMBRES = PRIORIDADES.map((n) => n.colorNombre);
 
