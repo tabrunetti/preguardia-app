@@ -16,7 +16,16 @@ import {
 } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const API_URL = 'http://172.28.96.1:3000/api';
+import { apiFetch } from '../../utils/api';
+import { cerrarSesion } from '../../utils/sesion';
+import {
+  ERROR_DNI,
+  errorFechaNacimiento,
+  esDniValido,
+  mascaraFecha,
+  MAX_LARGO_DNI,
+  MAX_LARGO_FECHA,
+} from '../../utils/validaciones';
 
 type Usuario = {
   id: number;
@@ -50,8 +59,8 @@ const validar = (campo: CampoUsuario, valor: string): string | null => {
   if ((campo === 'nombre' || campo === 'email') && !v) return 'Este campo es obligatorio.';
   if (!v) return null;
   if (campo === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Ingresá un email válido.';
-  if (campo === 'dni' && !/^\d{7,8}$/.test(v.replace(/\./g, ''))) return 'El DNI debe tener 7 u 8 números.';
-  if (campo === 'fechaNacimiento' && !/^\d{2}\/\d{2}\/\d{4}$/.test(v)) return 'Usá el formato DD/MM/AAAA.';
+  if (campo === 'dni' && !esDniValido(v)) return ERROR_DNI;
+  if (campo === 'fechaNacimiento') return errorFechaNacimiento(v);
   if (campo === 'celular' && v.replace(/\D/g, '').length < 8) return 'Ingresá un teléfono válido.';
   return null;
 };
@@ -63,6 +72,8 @@ type CampoEditableProps = {
   placeholder: string;
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
   autoCapitalize?: 'none' | 'words' | 'sentences';
+  maxLength?: number;
+  mascara?: (texto: string) => string; // ej. mascaraFecha: agrega las barras al escribir
   onGuardar: (nuevoValor: string) => Promise<boolean>;
 };
 
@@ -72,6 +83,8 @@ const CampoEditable = ({
   placeholder,
   keyboardType = 'default',
   autoCapitalize = 'sentences',
+  maxLength,
+  mascara,
   onGuardar,
 }: CampoEditableProps) => {
   const [editando, setEditando] = useState(false);
@@ -99,7 +112,8 @@ const CampoEditable = ({
           <TextInput
             style={styles.campoInput}
             value={texto}
-            onChangeText={setTexto}
+            onChangeText={(t) => setTexto(mascara ? mascara(t) : t)}
+            maxLength={maxLength}
             placeholder={placeholder}
             placeholderTextColor={Colors.textLight}
             keyboardType={keyboardType}
@@ -159,8 +173,8 @@ export default function PerfilScreen() {
       }
 
       const [resUsuario, resFamiliares] = await Promise.all([
-        fetch(`${API_URL}/usuarios/${id}`),
-        fetch(`${API_URL}/usuarios/${id}/familiares`),
+        apiFetch(`/usuarios/${id}`),
+        apiFetch(`/usuarios/${id}/familiares`),
       ]);
       if (!resUsuario.ok || !resFamiliares.ok) throw new Error();
 
@@ -192,7 +206,7 @@ export default function PerfilScreen() {
     const valorFinal = campo === 'dni' ? valor.replace(/\./g, '').trim() : valor.trim();
 
     try {
-      const res = await fetch(`${API_URL}/usuarios/${usuario.id}`, {
+      const res = await apiFetch(`/usuarios/${usuario.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ [campo]: valorFinal }),
@@ -213,7 +227,7 @@ export default function PerfilScreen() {
   const eliminarFamiliar = async (f: Familiar) => {
     if (!usuario) return;
     try {
-      const res = await fetch(`${API_URL}/usuarios/${usuario.id}/familiares/${f.id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/usuarios/${usuario.id}/familiares/${f.id}`, { method: 'DELETE' });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
         Alert.alert('Error', data?.error ?? 'No se pudo eliminar el familiar.');
@@ -233,7 +247,7 @@ export default function PerfilScreen() {
   };
 
   const handleCerrarSesion = async () => {
-    await AsyncStorage.removeItem('usuarioId');
+    await cerrarSesion();
     router.replace('/');
   };
 
@@ -281,6 +295,7 @@ export default function PerfilScreen() {
                 valor={usuario.dni}
                 placeholder="Ingresá tu DNI"
                 keyboardType="numeric"
+                maxLength={MAX_LARGO_DNI}
                 onGuardar={(v) => actualizarCampo('dni', v)}
               />
               <CampoEditable
@@ -288,6 +303,8 @@ export default function PerfilScreen() {
                 valor={usuario.fechaNacimiento}
                 placeholder="DD/MM/AAAA"
                 keyboardType="numeric"
+                maxLength={MAX_LARGO_FECHA}
+                mascara={mascaraFecha}
                 onGuardar={(v) => actualizarCampo('fechaNacimiento', v)}
               />
 

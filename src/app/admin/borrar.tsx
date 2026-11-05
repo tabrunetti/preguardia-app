@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import { Alert, FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const API_URL = 'http://172.28.96.1:3000/api';
+import { apiFetch } from '../../utils/api';
 
 export default function BorrarUsuarios() {
   const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -18,7 +18,7 @@ export default function BorrarUsuarios() {
         setUsuarios([]);
         return;
       }
-      const response = await fetch(`${API_URL}/hospitales/${hospitalId}/personal`);
+      const response = await apiFetch(`/hospitales/${hospitalId}/personal`);
       if (!response.ok) throw new Error();
       setUsuarios(await response.json());
     } catch (error) {
@@ -38,7 +38,7 @@ export default function BorrarUsuarios() {
     // Separamos la lógica de borrado para reutilizarla
     const ejecutarBorrado = async () => {
       try {
-        const response = await fetch(`${API_URL}/usuarios/${id}/desactivar`, {
+        const response = await apiFetch(`/usuarios/${id}/desactivar`, {
           method: 'PATCH'
         });
         

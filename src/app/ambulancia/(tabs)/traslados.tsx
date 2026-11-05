@@ -3,7 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../../constants/api';
+import { apiFetch } from '../../../utils/api';
 import { Colors } from '../../../constants/colors';
 import { colorDeNivel, infoNivel } from '../../../constants/niveles';
 import { avisar, confirmar } from '../../../utils/alertas';
@@ -62,7 +62,7 @@ export default function Traslados() {
         setError('No se encontró la sesión.');
         return;
       }
-      const res = await fetch(`${API_URL}/turnos/ambulancia/${usuarioId}`);
+      const res = await apiFetch(`/turnos/ambulancia/${usuarioId}`);
       if (!res.ok) throw new Error();
       setTraslados(await res.json());
     } catch {
@@ -90,7 +90,7 @@ export default function Traslados() {
 
     setProcesando(t.id);
     try {
-      const res = await fetch(`${API_URL}/turnos/${t.id}/estado`, {
+      const res = await apiFetch(`/turnos/${t.id}/estado`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado }),

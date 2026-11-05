@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -14,7 +13,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../constants/api';
+import { apiFetch } from '../utils/api';
+import { esDniValido } from '../utils/validaciones';
+import { guardarSesion } from '../utils/sesion';
 import { Colors } from '../constants/colors';
 import { avisar } from '../utils/alertas';
 
@@ -31,7 +32,7 @@ export default function CrearPerfil() {
       avisar('Faltan datos', 'Por favor completá todos los campos.');
       return;
     }
-    if (!/^\d{7,8}$/.test(dni.replace(/\D/g, ''))) {
+    if (!esDniValido(dni)) {
       avisar('DNI inválido', 'El DNI debe tener 7 u 8 números.');
       return;
     }
@@ -42,7 +43,7 @@ export default function CrearPerfil() {
 
     setGuardando(true);
     try {
-      const response = await fetch(`${API_URL}/auth/registro`, {
+      const response = await apiFetch(`/auth/registro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -60,17 +61,15 @@ export default function CrearPerfil() {
         return;
       }
 
-      const usuario = data?.usuario ?? data;
-      if (!usuario?.id) {
+      const usuario = data?.usuario;
+      if (!usuario?.id || !data?.token) {
         avisar('Cuenta creada', 'Tu cuenta se creó. Iniciá sesión para continuar.');
         router.replace('/');
         return;
       }
 
       // Guardamos la sesión igual que en el login
-      await AsyncStorage.multiRemove(['usuarioId', 'rol', 'hospitalId']);
-      await AsyncStorage.setItem('usuarioId', usuario.id.toString());
-      await AsyncStorage.setItem('rol', usuario.rol ?? 'Paciente');
+      await guardarSesion(data.token, usuario);
 
       router.replace('/(paciente)/home');
     } catch (error) {

@@ -4,7 +4,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../../constants/api';
+import { apiFetch } from '../../../utils/api';
 import { Colors } from '../../../constants/colors';
 
 type Stats = { totalEnEspera: number; niveles: Record<string, number> };
@@ -61,14 +61,14 @@ export default function AmbulanciaHome() {
   const cargar = useCallback(async () => {
     try {
       setError(null);
-      const res = await fetch(`${API_URL}/hospitales`);
+      const res = await apiFetch(`/hospitales`);
       if (!res.ok) throw new Error();
       const lista: Omit<Hospital, 'stats'>[] = await res.json();
 
       const conStats = await Promise.all(
         lista.map(async (h) => {
           try {
-            const r = await fetch(`${API_URL}/hospitales/${h.id}/stats`);
+            const r = await apiFetch(`/hospitales/${h.id}/stats`);
             return { ...h, stats: r.ok ? await r.json() : STATS_VACIAS };
           } catch {
             return { ...h, stats: STATS_VACIAS };

@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -8,7 +7,7 @@ import { Colors } from '../constants/colors';
 import { BanderasRojas, hayBanderaRoja } from '../utils/triage';
 
 // Reemplazá con tu IP local
-const API_URL = 'http://172.28.96.1:3000/api'; 
+import { apiFetch } from '../utils/api';
 
 const PREGUNTAS: { key: keyof BanderasRojas; texto: string }[] = [
   { key: 'dificultadRespiratoria', texto: '¿Tiene dificultad para respirar en este momento?' },
@@ -42,16 +41,12 @@ export default function BanderasRojasScreen() {
 
     if (bandera.activa) {
       try {
-        // LEEMOS EL ID DEL USUARIO GUARDADO EN MEMORIA
-        const creadorIdString = await AsyncStorage.getItem('usuarioId');
-        const creadorId = creadorIdString ? parseInt(creadorIdString, 10) : null;
 
-        const response = await fetch(`${API_URL}/turnos`, { 
+        const response = await apiFetch(`/turnos`, { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             hospitalId: params.id,
-            creadorId: creadorId, // <--- AGREGAMOS EL CREADOR ID ACÁ
             pacienteNombre: params.pacienteNombre,
             pacienteDni: params.pacienteDni,
             pacienteTelefono: params.pacienteTelefono,

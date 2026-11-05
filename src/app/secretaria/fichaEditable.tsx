@@ -5,7 +5,7 @@ import {
   ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
 import { Colors } from '../../constants/colors';
 import { NIVELES } from '../../constants/niveles';
 import { avisar } from '../../utils/alertas';
@@ -40,7 +40,7 @@ export default function FichaEditable() {
         if (!id) return;
         setCargando(true);
         try {
-          const res = await fetch(`${API_URL}/turnos/${id}`);
+          const res = await apiFetch(`/turnos/${id}`);
           if (!res.ok) throw new Error();
           const t: Turno = await res.json();
           if (cancelado) return;
@@ -72,7 +72,7 @@ export default function FichaEditable() {
 
     setGuardando(true);
     try {
-      const res = await fetch(`${API_URL}/turnos/${turno.id}`, {
+      const res = await apiFetch(`/turnos/${turno.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

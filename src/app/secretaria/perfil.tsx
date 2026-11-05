@@ -3,7 +3,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
 import { Colors } from '../../constants/colors';
 import { cerrarSesion, obtenerSesion } from '../../utils/sesion';
 
@@ -34,7 +34,7 @@ export default function SecretariaPerfil() {
             setError('No se encontró la sesión.');
             return;
           }
-          const res = await fetch(`${API_URL}/usuarios/${usuarioId}`);
+          const res = await apiFetch(`/usuarios/${usuarioId}`);
           if (!res.ok) throw new Error();
           setUsuario(await res.json());
         } catch {

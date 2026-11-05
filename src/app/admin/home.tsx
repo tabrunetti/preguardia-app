@@ -5,7 +5,9 @@ import { useState } from 'react';
 import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const API_URL = 'http://172.28.96.1:3000/api';
+import { apiFetch } from '../../utils/api';
+import { esDniValido, MAX_LARGO_DNI } from '../../utils/validaciones';
+import { cerrarSesion } from '../../utils/sesion';
 
 const avisar = (titulo: string, mensaje: string) => {
   if (Platform.OS === 'web') window.alert(`${titulo}\n\n${mensaje}`);
@@ -26,7 +28,7 @@ export default function AdminHome() {
       avisar('Error', 'Por favor completá todos los campos.');
       return;
     }
-    if (!/^\d{7,8}$/.test(dni.replace(/\D/g, ''))) {
+    if (!esDniValido(dni)) {
       avisar('Error', 'El DNI debe tener 7 u 8 números.');
       return;
     }
@@ -44,11 +46,10 @@ export default function AdminHome() {
 
     setGuardando(true);
     try {
-      const response = await fetch(`${API_URL}/usuarios/personal`, {
+      const response = await apiFetch(`/usuarios/personal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          adminId: Number(adminId),
           nombre: nombre.trim(),
           dni: dni.trim(),
           email: email.trim(),
@@ -77,7 +78,7 @@ export default function AdminHome() {
   };
 
   const handleCerrarSesion = async () => {
-    await AsyncStorage.multiRemove(['usuarioId', 'rol', 'hospitalId']);
+    await cerrarSesion();
     router.replace('/');
   };
 
@@ -136,6 +137,7 @@ export default function AdminHome() {
             placeholder="ej: 28.345.678"
             placeholderTextColor={Colors.textLight}
             keyboardType="numeric"
+            maxLength={MAX_LARGO_DNI}
             value={dni}
             onChangeText={setDni}
           />

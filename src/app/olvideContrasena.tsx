@@ -13,7 +13,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../constants/api';
+import { apiFetch } from '../utils/api';
+import { esDniValido } from '../utils/validaciones';
 import { Colors } from '../constants/colors';
 
 export default function OlvideContrasena() {
@@ -42,7 +43,7 @@ export default function OlvideContrasena() {
       setError('Ingresá un correo electrónico válido.');
       return;
     }
-    if (!/^\d{7,8}$/.test(dniLimpio)) {
+    if (!esDniValido(dniLimpio)) {
       setError('El DNI debe tener 7 u 8 números.');
       return;
     }
@@ -58,7 +59,7 @@ export default function OlvideContrasena() {
     setError('');
     setGuardando(true);
     try {
-      const res = await fetch(`${API_URL}/auth/restablecer`, {
+      const res = await apiFetch(`/auth/restablecer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: correo, dni: dniLimpio, nuevaPassword: password }),

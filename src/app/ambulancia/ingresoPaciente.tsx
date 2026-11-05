@@ -5,7 +5,8 @@ import {
   ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
+import { esDniValido } from '../../utils/validaciones';
 import { Colors } from '../../constants/colors';
 import { NIVELES } from '../../constants/niveles';
 import { avisar } from '../../utils/alertas';
@@ -103,7 +104,7 @@ export default function IngresoPaciente() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`${API_URL}/hospitales/${id}`)
+    apiFetch(`/hospitales/${id}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((h) => h && setHospitalNombre(h.nombre))
       .catch(() => {});
@@ -116,7 +117,7 @@ export default function IngresoPaciente() {
       avisar('Falta la prioridad', 'Elegí la prioridad estimada del paciente.');
       return;
     }
-    if (!noIdentificado && dni.trim() && !/^\d{7,8}$/.test(dni.replace(/\D/g, ''))) {
+    if (!noIdentificado && dni.trim() && !esDniValido(dni)) {
       avisar('DNI inválido', 'El DNI debe tener 7 u 8 números (o dejalo vacío).');
       return;
     }
@@ -140,11 +141,10 @@ export default function IngresoPaciente() {
 
     setEnviando(true);
     try {
-      const res = await fetch(`${API_URL}/turnos/ambulancia`, {
+      const res = await apiFetch(`/turnos/ambulancia`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ambulanciaId: usuarioId,
           hospitalId: id,
           pacienteNombre: noIdentificado ? 'NN (no identificado)' : nombre.trim() || null,
           pacienteDni: noIdentificado ? '' : dni,

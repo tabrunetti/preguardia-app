@@ -19,7 +19,17 @@ import EscanerDni from "../components/escanerDni";
 import { Colors } from "../constants/colors";
 import { avisar } from "../utils/alertas";
 import { DatosDni, formatearDni } from "../utils/dni";
-const API_URL = "http://172.28.96.1:3000/api";
+import { apiFetch } from '../utils/api';
+import {
+  calcularEdad,
+  ERROR_DNI,
+  errorFechaNacimiento,
+  esDniValido,
+  limpiarDni,
+  mascaraFecha,
+  MAX_LARGO_DNI,
+  MAX_LARGO_FECHA,
+} from '../utils/validaciones';
 
 type Usuario = {
   id: number;
@@ -84,8 +94,8 @@ export default function PreRegistro() {
       if (!usuarioId) return;
 
       const [resUsuario, resFamiliares] = await Promise.all([
-        fetch(`${API_URL}/usuarios/${usuarioId}`),
-        fetch(`${API_URL}/usuarios/${usuarioId}/familiares`),
+        apiFetch(`/usuarios/${usuarioId}`),
+        apiFetch(`/usuarios/${usuarioId}/familiares`),
       ]);
       if (!resUsuario.ok || !resFamiliares.ok) throw new Error();
 
@@ -164,6 +174,15 @@ export default function PreRegistro() {
       avisar("Faltan datos", "Por favor completá los campos obligatorios (*).");
       return;
     }
+    if (!esDniValido(dni)) {
+      avisar("DNI inválido", ERROR_DNI);
+      return;
+    }
+    const errorFecha = errorFechaNacimiento(fechaNacimiento);
+    if (errorFecha) {
+      avisar("Fecha de nacimiento inválida", errorFecha);
+      return;
+    }
 
     // Antes de seguir, verificamos que el usuario no tenga ya un turno vigente
     setVerificando(true);
@@ -173,7 +192,7 @@ export default function PreRegistro() {
         avisar("Sesión vencida", "Volvé a iniciar sesión.");
         return;
       }
-      const res = await fetch(`${API_URL}/turnos/usuario/${usuarioId}/vigente`);
+      const res = await apiFetch(`/turnos/usuario/${usuarioId}/vigente`);
       if (res.ok) {
         const vigente = await res.json();
         if (vigente) {
@@ -193,13 +212,13 @@ export default function PreRegistro() {
       setVerificando(false);
     }
 
-    const yearNacimiento = parseInt(fechaNacimiento.split("/").pop() || "0");
-    const edadCalculada = yearNacimiento ? new Date().getFullYear() - yearNacimiento : 0;
+    // Edad exacta (tiene en cuenta si ya cumplió años este año)
+    const edadCalculada = calcularEdad(fechaNacimiento) ?? 0;
 
     const params = new URLSearchParams({
       id: id as string,
       pacienteNombre: nombre.trim(),
-      pacienteDni: dni.replace(/\D/g, ""),
+      pacienteDni: limpiarDni(dni),
       pacienteEdad: edadCalculada.toString(),
       pacienteSexo: "No especificado",
       pacienteTelefono: telefono.trim(),
@@ -306,6 +325,7 @@ export default function PreRegistro() {
               placeholder="12.345.678"
               placeholderTextColor={Colors.textLight}
               keyboardType="numeric"
+              maxLength={MAX_LARGO_DNI}
               value={dni}
               onChangeText={setDni}
             />
@@ -315,8 +335,10 @@ export default function PreRegistro() {
               style={styles.input}
               placeholder="DD/MM/AAAA"
               placeholderTextColor={Colors.textLight}
+              keyboardType="numeric"
+              maxLength={MAX_LARGO_FECHA}
               value={fechaNacimiento}
-              onChangeText={setFechaNacimiento}
+              onChangeText={(t) => setFechaNacimiento(mascaraFecha(t))}
             />
 
             

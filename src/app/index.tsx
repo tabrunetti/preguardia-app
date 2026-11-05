@@ -1,6 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -12,12 +11,41 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../constants/colors";
+import { apiFetch } from '../utils/api';
+import { guardarSesion, obtenerSesion } from '../utils/sesion';
+
+// Pantalla de inicio de cada rol
+const rutaPorRol = (rol: string | null) => {
+  switch (rol) {
+    case 'Admin':
+      return '/admin/home';
+    case 'Secretaria':
+      return '/secretaria/ingreso';
+    case 'Ambulancia':
+    case 'Profesional':
+      return '/ambulancia/home';
+    default:
+      return '/(paciente)/home';
+  }
+};
+
 export default function SplashLogin() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verificandoSesion, setVerificandoSesion] = useState(true);
 
-const API_URL = 'http://172.28.96.1:3000/api';
+  // Si ya hay una sesión guardada, entramos directo (si el token venció,
+  // el primer request devuelve 401 y apiFetch nos trae de vuelta acá)
+  useEffect(() => {
+    obtenerSesion()
+      .then(({ token, rol }) => {
+        if (token) router.replace(rutaPorRol(rol));
+        else setVerificandoSesion(false);
+      })
+      .catch(() => setVerificandoSesion(false));
+  }, []);
+
 
 const handleIngresar = async () => {
   if (!email || !password) {
@@ -26,7 +54,7 @@ const handleIngresar = async () => {
   }
 
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await apiFetch(`/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -39,30 +67,12 @@ const handleIngresar = async () => {
       return;
     }
 
-    const usuario = data;
+    const { token, usuario } = data;
 
     // Guardamos la sesión (borrando datos de una sesión anterior)
-    await AsyncStorage.multiRemove(['usuarioId', 'rol', 'hospitalId']);
-    await AsyncStorage.setItem('usuarioId', usuario.id.toString());
-    await AsyncStorage.setItem('rol', usuario.rol);
-    if (usuario.hospitalId) {
-      await AsyncStorage.setItem('hospitalId', usuario.hospitalId);
-    }
+    await guardarSesion(token, usuario);
 
-    switch (usuario.rol) {
-      case 'Admin':
-        router.replace('/admin/home');
-        break;
-      case 'Secretaria':
-        router.replace('/secretaria/ingreso');
-        break;
-      case 'Ambulancia':
-      case 'Profesional':
-        router.replace('/ambulancia/home');
-        break;
-      default:
-        router.replace('/(paciente)/home');
-    }
+    router.replace(rutaPorRol(usuario.rol));
   } catch (error) {
     console.error(error);
     Alert.alert('Error', 'No se pudo conectar con el servidor.');
@@ -75,6 +85,11 @@ const handleIngresar = async () => {
   const handleOlvideContrasena = () => {
     router.push("/olvideContrasena");
   };
+
+  // Mientras revisamos si hay sesión, no mostramos el login (evita el parpadeo)
+  if (verificandoSesion) {
+    return <View style={{ flex: 1, backgroundColor: Colors.background }} />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

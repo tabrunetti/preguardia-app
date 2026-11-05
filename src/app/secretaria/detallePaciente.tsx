@@ -3,7 +3,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
 import { Colors } from '../../constants/colors';
 import { colorDeNivel } from '../../constants/niveles';
 
@@ -74,7 +74,7 @@ export default function DetallePaciente() {
         setTurno(null);
         setError(null);
         try {
-          const res = await fetch(`${API_URL}/turnos/${id}`);
+          const res = await apiFetch(`/turnos/${id}`);
           if (!res.ok) throw new Error();
           const data = await res.json();
           if (!cancelado) setTurno(data);

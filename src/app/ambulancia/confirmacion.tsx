@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
 import { Colors } from '../../constants/colors';
 import { infoNivel } from '../../constants/niveles';
 
@@ -23,7 +23,7 @@ export default function ConfirmacionTraslado() {
 
   useEffect(() => {
     if (!turnoId) return;
-    fetch(`${API_URL}/turnos/${turnoId}`)
+    apiFetch(`/turnos/${turnoId}`)
       .then((r) => (r.ok ? r.json() : null))
       .then(setTurno)
       .catch(() => {});

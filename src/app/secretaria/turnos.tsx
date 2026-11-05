@@ -3,7 +3,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
 import { Colors } from '../../constants/colors';
 import { colorDeNivel, ordenDeNivel } from '../../constants/niveles';
 import { avisar, confirmar } from '../../utils/alertas';
@@ -37,7 +37,7 @@ export default function SecretariaSalaEspera() {
         setError('Tu cuenta no tiene hospital asignado.');
         return;
       }
-      const res = await fetch(`${API_URL}/turnos/hospital/${hospitalId}?estados=Activo`);
+      const res = await apiFetch(`/turnos/hospital/${hospitalId}?estados=Activo`);
       if (!res.ok) throw new Error();
       const data: Turno[] = await res.json();
       // Primero por prioridad, después por orden de llegada
@@ -69,7 +69,7 @@ export default function SecretariaSalaEspera() {
 
     setProcesando(t.id);
     try {
-      const res = await fetch(`${API_URL}/turnos/${t.id}/estado`, {
+      const res = await apiFetch(`/turnos/${t.id}/estado`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado: 'Finalizado' }),

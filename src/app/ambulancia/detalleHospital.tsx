@@ -3,7 +3,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
 import { Colors } from '../../constants/colors';
 import { colorDeNivel, ordenDeNivel } from '../../constants/niveles';
 
@@ -20,8 +20,8 @@ export default function AmbulanciaDetalleHospital() {
     if (!id) return;
     try {
       const [resH, resS] = await Promise.all([
-        fetch(`${API_URL}/hospitales/${id}`),
-        fetch(`${API_URL}/hospitales/${id}/stats`),
+        apiFetch(`/hospitales/${id}`),
+        apiFetch(`/hospitales/${id}/stats`),
       ]);
       if (resH.ok) setHospital(await resH.json());
       if (resS.ok) setStats(await resS.json());

@@ -31,7 +31,9 @@ yarn-error.*
 *.pem
 
 # local env files
+# .env.local SÍ se sube: es donde cada uno pone la IP de su compu (EXPO_PUBLIC_API_URL)
 .env*.local
+!.env.local
 
 # typescript
 *.tsbuildinfo

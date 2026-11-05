@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -24,7 +23,7 @@ import {
 } from '../utils/triage';
 
 // Reemplazá con tu IP local
-const API_URL = 'http://172.28.96.1:3000/api'; 
+import { apiFetch } from '../utils/api';
 
 const MOTIVOS: Motivo[] = [
   'Dolor', 'Fiebre', 'Dificultad respiratoria', 
@@ -57,7 +56,12 @@ export default function CuestionarioTriaje() {
   const [enfermedadCronica, setEnfermedadCronica] = useState(false);
   const [embarazo, setEmbarazo] = useState(false);
 
-  const formularioCompleto = motivo && escalaDolor !== null && tiempoSintomas && evolucion;
+  // Si elige "Otro", el texto pasa a ser el motivo de consulta (obligatorio)
+  const esOtro = motivo === 'Otro';
+  const motivoFinal = esOtro ? detalle.trim() : motivo;
+
+  const formularioCompleto =
+    motivo && (!esOtro || detalle.trim() !== '') && escalaDolor !== null && tiempoSintomas && evolucion;
 
   // Hacemos la función asíncrona para poder usar fetch
   const handleSiguiente = async () => {
@@ -89,21 +93,17 @@ export default function CuestionarioTriaje() {
 
     // CONSOLIDAMOS Y ENVIAMOS TODO AL BACKEND
     try {
-      // LEEMOS EL ID DEL USUARIO GUARDADO EN MEMORIA
-      const creadorIdString = await AsyncStorage.getItem('usuarioId');
-      const creadorId = creadorIdString ? parseInt(creadorIdString, 10) : null;
 
-      const response = await fetch(`${API_URL}/turnos`, {
+      const response = await apiFetch(`/turnos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           hospitalId: params.id,
-          creadorId: creadorId, // <--- AGREGAMOS EL CREADOR ID ACÁ
           pacienteNombre: params.pacienteNombre,
           pacienteDni: params.pacienteDni,
           pacienteTelefono: params.pacienteTelefono,
           pacienteEdad: edad ? parseInt(edad, 10) : Number(params.pacienteEdad) || 0,
-          motivo: motivo,
+          motivo: motivoFinal,
           nivel: resultado.nivel,
           color: resultado.color,
           triaje: {
@@ -115,7 +115,6 @@ export default function CuestionarioTriaje() {
               frecuenciaCardiaca: frecuenciaCardiaca ? parseInt(frecuenciaCardiaca, 10) : undefined,
               enfermedadCronica,
               embarazo,
-              detalleExtra: detalle 
           }
         })
       });
@@ -159,7 +158,10 @@ export default function CuestionarioTriaje() {
               <Pressable
                 key={m}
                 style={[styles.chip, motivo === m && styles.chipActivo]}
-                onPress={() => setMotivo(m)}
+                onPress={() => {
+                  setMotivo(m);
+                  if (m !== 'Otro') setDetalle(''); // el texto solo aplica a "Otro"
+                }}
               >
                 <Text style={[styles.chipTexto, motivo === m && styles.chipTextoActivo]}>{m}</Text>
               </Pressable>
@@ -211,16 +213,22 @@ export default function CuestionarioTriaje() {
             ))}
           </View>
 
-          <Text style={styles.label}>Detalle adicional (Opcional)</Text>
-          <TextInput
-            style={styles.textArea}
-            placeholder="Ej. Dolor agudo abdominal derecho..."
-            placeholderTextColor={Colors.textLight}
-            multiline
-            numberOfLines={3}
-            value={detalle}
-            onChangeText={setDetalle}
-          />
+          {/* Solo con "Otro": el paciente escribe su motivo de consulta */}
+          {esOtro && (
+            <>
+              <Text style={styles.label}>¿Cuál es el motivo de su consulta?</Text>
+              <TextInput
+                style={styles.textArea}
+                placeholder="Ej. Dolor de oído, reacción alérgica, mareos..."
+                placeholderTextColor={Colors.textLight}
+                multiline
+                numberOfLines={3}
+                maxLength={100}
+                value={detalle}
+                onChangeText={setDetalle}
+              />
+            </>
+          )}
 
           <View style={styles.divider} />
           <Text style={styles.seccionTitulo}>Signos vitales (Opcional)</Text>

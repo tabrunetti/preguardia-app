@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const API_URL = 'http://172.28.96.1:3000/api';
+import { apiFetch } from '../../utils/api';
 
 type TurnoHistorial = {
   id: number;
@@ -36,7 +36,7 @@ export default function HistorialScreen() {
         setTurnos([]);
         return;
       }
-      const res = await fetch(`${API_URL}/turnos/paciente/${id}/historial`);
+      const res = await apiFetch(`/turnos/paciente/${id}/historial`);
       if (!res.ok) throw new Error();
       setTurnos(await res.json());
     } catch {

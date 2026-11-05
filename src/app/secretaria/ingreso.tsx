@@ -3,7 +3,8 @@ import { useState } from 'react';
 import {
   ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
 } from 'react-native';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
+import { esDniValido, MAX_LARGO_DNI } from '../../utils/validaciones';
 import { Colors } from '../../constants/colors';
 import { NIVELES } from '../../constants/niveles';
 import { avisar } from '../../utils/alertas';
@@ -30,7 +31,7 @@ export default function SecretariaIngreso() {
       avisar('Faltan datos', 'Completá DNI, nombre y motivo de consulta.');
       return;
     }
-    if (!/^\d{7,8}$/.test(dni.replace(/\D/g, ''))) {
+    if (!esDniValido(dni)) {
       avisar('DNI inválido', 'El DNI debe tener 7 u 8 números.');
       return;
     }
@@ -49,11 +50,10 @@ export default function SecretariaIngreso() {
 
     setGuardando(true);
     try {
-      const res = await fetch(`${API_URL}/turnos/presencial`, {
+      const res = await apiFetch(`/turnos/presencial`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          secretariaId: usuarioId,
           pacienteNombre: nombre.trim(),
           pacienteDni: dni,
           pacienteEdad: edad ? Number(edad) : null,
@@ -94,6 +94,7 @@ export default function SecretariaIngreso() {
                 placeholder="Ej: 12.345.678"
                 placeholderTextColor={Colors.textLight}
                 keyboardType="numeric"
+                maxLength={MAX_LARGO_DNI}
                 value={dni}
                 onChangeText={setDni}
               />

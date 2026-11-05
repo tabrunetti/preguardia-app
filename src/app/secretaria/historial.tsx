@@ -3,7 +3,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API_URL } from '../../constants/api';
+import { apiFetch } from '../../utils/api';
 import { Colors } from '../../constants/colors';
 import { colorDeNivel } from '../../constants/niveles';
 import { obtenerSesion } from '../../utils/sesion';
@@ -37,7 +37,7 @@ export default function SecretariaHistorial() {
         setError('Tu cuenta no tiene hospital asignado.');
         return;
       }
-      const res = await fetch(`${API_URL}/turnos/hospital/${hospitalId}?estados=Finalizado`);
+      const res = await apiFetch(`/turnos/hospital/${hospitalId}?estados=Finalizado`);
       if (!res.ok) throw new Error();
       const data: Turno[] = await res.json();
       // Los atendidos más recientes primero

@@ -16,7 +16,7 @@ import {
 import { Colors } from '../../constants/colors';
 import { Hospital } from '../../data/hospitals';
 
-const API_URL = 'http://172.28.96.1:3000/api';
+import { apiFetch } from '../../utils/api';
 
 function calcularDistancia(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; 
@@ -50,7 +50,7 @@ export default function HomePaciente() {
     const cargarDatos = async () => {
       try {
         // 1. Buscamos los hospitales en el backend
-        const response = await fetch(`${API_URL}/hospitales`);
+        const response = await apiFetch(`/hospitales`);
         const hospitalesDB: Hospital[] = await response.json();
 
         // 2. Pedimos permisos de ubicación

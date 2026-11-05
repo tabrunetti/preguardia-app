@@ -18,7 +18,15 @@ import EscanerDni from '../components/escanerDni';
 import { Colors } from '../constants/colors';
 import { DatosDni, formatearDni } from '../utils/dni';
 
-const API_URL = 'http://172.28.96.1:3000/api';
+import { apiFetch } from '../utils/api';
+import {
+  ERROR_DNI,
+  errorFechaNacimiento,
+  esDniValido,
+  mascaraFecha,
+  MAX_LARGO_DNI,
+  MAX_LARGO_FECHA,
+} from '../utils/validaciones';
 
 const PARENTESCOS = ['Hijo/a', 'Madre', 'Padre', 'Pareja', 'Hermano/a', 'Abuelo/a', 'Otro'];
 
@@ -52,12 +60,13 @@ export default function FamiliarNuevo() {
       setError('Completá el parentesco y todos los campos obligatorios (*).');
       return;
     }
-    if (!/^\d{7,8}$/.test(dni.replace(/\D/g, ''))) {
-      setError('El DNI debe tener 7 u 8 números.');
+    if (!esDniValido(dni)) {
+      setError(ERROR_DNI);
       return;
     }
-    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fechaNacimiento.trim())) {
-      setError('La fecha de nacimiento debe tener el formato DD/MM/AAAA.');
+    const errorFecha = errorFechaNacimiento(fechaNacimiento);
+    if (errorFecha) {
+      setError(errorFecha);
       return;
     }
 
@@ -69,7 +78,7 @@ export default function FamiliarNuevo() {
 
     setGuardando(true);
     try {
-      const res = await fetch(`${API_URL}/usuarios/${usuarioId}/familiares`, {
+      const res = await apiFetch(`/usuarios/${usuarioId}/familiares`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -144,11 +153,12 @@ export default function FamiliarNuevo() {
 
           <Text style={styles.label}>DNI / Documento *</Text>
           <TextInput style={styles.input} placeholder="12.345.678" placeholderTextColor={Colors.textLight}
-            keyboardType="numeric" value={dni} onChangeText={setDni} />
+            keyboardType="numeric" maxLength={MAX_LARGO_DNI} value={dni} onChangeText={setDni} />
 
           <Text style={styles.label}>Fecha de nacimiento *</Text>
           <TextInput style={styles.input} placeholder="DD/MM/AAAA" placeholderTextColor={Colors.textLight}
-            value={fechaNacimiento} onChangeText={setFechaNacimiento} />
+            keyboardType="numeric" maxLength={MAX_LARGO_FECHA}
+            value={fechaNacimiento} onChangeText={(t) => setFechaNacimiento(mascaraFecha(t))} />
 
           
           <Text style={styles.label}>Teléfono (Opcional)</Text>

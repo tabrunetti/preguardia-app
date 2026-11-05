@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Image, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { API_URL } from '../constants/api';
+import { apiFetch } from '../utils/api';
 import { Colors } from '../constants/colors';
 import { colorDeNivel, ordenDeNivel } from '../constants/niveles';
 
@@ -27,7 +27,7 @@ export default function DetalleHospital() {
   const cargarStats = useCallback(async () => {
     if (!id) return;
     try {
-      const res = await fetch(`${API_URL}/hospitales/${id}/stats`);
+      const res = await apiFetch(`/hospitales/${id}/stats`);
       setStats(res.ok ? await res.json() : STATS_VACIAS);
     } catch {
       setStats(STATS_VACIAS);
@@ -41,7 +41,7 @@ export default function DetalleHospital() {
       (async () => {
         if (!id) return;
         try {
-          const res = await fetch(`${API_URL}/hospitales/${id}`);
+          const res = await apiFetch(`/hospitales/${id}`);
           if (!res.ok) throw new Error('No se pudo cargar el hospital');
           const data = await res.json();
           if (!cancelado) setHospital(data);

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { Colors } from '../../constants/colors';
 
-const API_URL = 'http://172.28.96.1:3000/api';
+import { apiFetch } from '../../utils/api';
 
 type Turno = {
   id: number;
@@ -55,7 +55,7 @@ export default function MiTurnoScreen() {
         setTurno(null);
         return;
       }
-      const res = await fetch(`${API_URL}/turnos/paciente/${usuarioId}/activo`);
+      const res = await apiFetch(`/turnos/paciente/${usuarioId}/activo`);
       if (!res.ok) throw new Error();
       setTurno(await res.json());
     } catch {
@@ -78,7 +78,7 @@ export default function MiTurnoScreen() {
     const cambiarEstado = async (estado: 'Activo' | 'Cancelado') => {
     if (!turno) return;
     try {
-      const res = await fetch(`${API_URL}/turnos/${turno.id}/estado`, {
+      const res = await apiFetch(`/turnos/${turno.id}/estado`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado }),
