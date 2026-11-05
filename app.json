@@ -44,7 +44,8 @@
         {
           "locationWhenInUsePermission": "Necesitamos tu ubicación para mostrarte las guardias más cercanas a vos."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
